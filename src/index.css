@@ -2517,8 +2517,8 @@ h3 {
   }
 
   .site-header-inner {
-    gap: 12px;
-    padding: 10px 12px;
+    gap: 10px;
+    padding: 10px;
     border-radius: 24px;
     flex-direction: row;
     align-items: center;
@@ -2537,16 +2537,33 @@ h3 {
 
   .brand {
     min-width: 0;
+    gap: 10px;
+    flex: 1 1 auto;
+  }
+
+  .brand-mark {
+    width: 40px;
   }
 
   .brand-copy strong {
-    font-size: 0.9rem;
+    font-size: 0.84rem;
     white-space: nowrap;
   }
 
+  .language-toggle {
+    flex-shrink: 0;
+  }
+
+  .language-toggle-button {
+    min-width: 40px;
+    padding: 8px 10px;
+    font-size: 0.76rem;
+  }
+
   .mobile-nav-toggle {
-    width: 44px;
-    height: 44px;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
   }
 
   .leaderboard-note {
@@ -2594,17 +2611,24 @@ h3 {
 
   .hero-copy {
     gap: 18px;
+    width: 100%;
   }
 
   .hero-copy h1 {
-    font-size: clamp(3rem, 18vw, 4.7rem);
-    max-width: 8.8ch;
+    font-size: clamp(2.55rem, 14vw, 3.9rem);
+    max-width: 100%;
+    letter-spacing: -0.078em;
+    overflow-wrap: break-word;
   }
 
   .hero-copy p {
-    max-width: 34ch;
+    max-width: 30ch;
     font-size: 0.98rem;
     line-height: 1.72;
+  }
+
+  .hero-section .section-eyebrow {
+    margin-inline: auto;
   }
 
   .hero-actions .button {
@@ -2635,6 +2659,16 @@ h3 {
 
   .demo-badge {
     align-self: flex-start;
+  }
+
+  .reaction-surface {
+    padding: 18px;
+    min-height: min(50svh, 320px);
+    border-radius: 24px;
+  }
+
+  .reaction-surface p {
+    max-width: 17ch;
   }
 
   .reaction-entry-bar .button {
@@ -2718,6 +2752,18 @@ h3 {
     text-align: left;
   }
 
+  .session-history {
+    max-width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .session-history span {
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+
   .consent-actions {
     width: 100%;
     justify-content: flex-start;
@@ -2748,18 +2794,28 @@ h3 {
   }
 
   .reaction-surface {
-    padding: 18px;
-    min-height: min(52svh, 340px);
+    padding: 16px;
+    min-height: min(46svh, 300px);
     border-radius: 28px;
   }
 
   .reaction-surface strong {
-    font-size: clamp(3rem, 16vw, 3.6rem);
+    font-size: clamp(2.7rem, 14vw, 3.3rem);
   }
 
   .reaction-surface p {
-    max-width: 16ch;
+    max-width: 15ch;
     line-height: 1.64;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(2.3rem, 12.4vw, 3.15rem);
+    line-height: 0.92;
+    letter-spacing: -0.07em;
+  }
+
+  .hero-copy p {
+    max-width: 28ch;
   }
 
   .reaction-demo-top,
