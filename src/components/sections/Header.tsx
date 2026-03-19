@@ -2,6 +2,7 @@ import { useEffect, useState, type MouseEvent } from "react";
 import { Button } from "../Button";
 import { goToHomeSection, type AppRoute } from "../../lib/appRoute";
 import { useLocale } from "../../state/LocaleContext";
+import { useTheme } from "../../state/ThemeContext";
 
 type HeaderProps = {
   route: AppRoute;
@@ -10,6 +11,7 @@ type HeaderProps = {
 export function Header({ route }: HeaderProps) {
   const isLegalPage = route !== "home";
   const { locale, setLocale } = useLocale();
+  const { isDark, toggleTheme } = useTheme();
   const isGerman = locale === "de";
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -28,6 +30,16 @@ export function Header({ route }: HeaderProps) {
   const handleMenuLinkClick = () => {
     setMobileMenuOpen(false);
   };
+
+  const themeToggleLabel = isGerman ? (isDark ? "Dunkel" : "Hell") : isDark ? "Dark" : "Light";
+
+  const themeToggleAriaLabel = isGerman
+    ? isDark
+      ? "Zum Lightmode wechseln"
+      : "Zum Darkmode wechseln"
+    : isDark
+      ? "Switch to light mode"
+      : "Switch to dark mode";
 
   return (
     <header className="site-header">
@@ -96,6 +108,20 @@ export function Header({ route }: HeaderProps) {
             </button>
           </div>
 
+          <button
+            type="button"
+            className={isDark ? "theme-toggle theme-toggle-active header-theme-toggle" : "theme-toggle header-theme-toggle"}
+            onClick={toggleTheme}
+            aria-pressed={isDark}
+            aria-label={themeToggleAriaLabel}
+            title={themeToggleAriaLabel}
+          >
+            <span className="theme-toggle-track" aria-hidden="true">
+              <span className="theme-toggle-thumb" />
+            </span>
+            <span className="theme-toggle-text">{themeToggleLabel}</span>
+          </button>
+
           <Button href="/" className="header-cta" onClick={handleHomeNav("demo")}>
             {isLegalPage
               ? isGerman
@@ -144,6 +170,19 @@ export function Header({ route }: HeaderProps) {
                 </>
               )}
             </div>
+
+            <button
+              type="button"
+              className={isDark ? "theme-toggle theme-toggle-active mobile-theme-toggle" : "theme-toggle mobile-theme-toggle"}
+              onClick={toggleTheme}
+              aria-pressed={isDark}
+              aria-label={themeToggleAriaLabel}
+            >
+              <span className="theme-toggle-track" aria-hidden="true">
+                <span className="theme-toggle-thumb" />
+              </span>
+              <span className="theme-toggle-text">{themeToggleLabel}</span>
+            </button>
 
             <Button
               href="/"
