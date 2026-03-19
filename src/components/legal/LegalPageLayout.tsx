@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Button } from "../Button";
+import { goToHomeSection } from "../../lib/appRoute";
 
 type LegalPageLayoutProps = {
   eyebrow: string;
@@ -25,7 +26,15 @@ export function LegalPageLayout({
           </div>
 
           <div className="legal-hero-actions">
-            <Button href="#demo">Zur Startseite</Button>
+            <Button
+              href="/"
+              onClick={(event) => {
+                event.preventDefault();
+                goToHomeSection("top");
+              }}
+            >
+              Zur Startseite
+            </Button>
             <Button href="#cookies" variant="secondary">
               Cookie-Einstellungen
             </Button>

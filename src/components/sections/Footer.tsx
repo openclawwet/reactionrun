@@ -1,4 +1,14 @@
+import type { MouseEvent } from "react";
+import { goToHomeSection } from "../../lib/appRoute";
+
 export function Footer() {
+  const handleHomeNav =
+    (section: "demo" | "stats" | "leaderboard") =>
+    (event: MouseEvent<HTMLAnchorElement>) => {
+      event.preventDefault();
+      goToHomeSection(section);
+    };
+
   return (
     <footer className="site-footer">
       <div className="container site-footer-inner">
@@ -8,9 +18,9 @@ export function Footer() {
         </div>
 
         <div className="footer-links">
-          <a href="#demo">Reaction Test</a>
-          <a href="#stats">Stats</a>
-          <a href="#leaderboard">Leaderboard</a>
+          <a href="/" onClick={handleHomeNav("demo")}>Reaction Test</a>
+          <a href="/" onClick={handleHomeNav("stats")}>Stats</a>
+          <a href="/" onClick={handleHomeNav("leaderboard")}>Leaderboard</a>
           <a href="#privacy">Datenschutz</a>
           <a href="#imprint">Impressum</a>
           <a href="#cookies">Cookies</a>

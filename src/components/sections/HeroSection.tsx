@@ -1,5 +1,6 @@
 import { Button } from "../Button";
 import { ReactionDemo } from "../ReactionDemo";
+import { goToHomeSection } from "../../lib/appRoute";
 
 export function HeroSection() {
   return (
@@ -17,7 +18,15 @@ export function HeroSection() {
           </p>
 
           <div className="hero-actions">
-            <Button href="#demo">Start reaction test</Button>
+            <Button
+              href="/"
+              onClick={(event) => {
+                event.preventDefault();
+                goToHomeSection("demo");
+              }}
+            >
+              Start reaction test
+            </Button>
           </div>
         </div>
 
