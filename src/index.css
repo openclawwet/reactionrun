@@ -38,6 +38,7 @@
 html {
   scroll-behavior: smooth;
   background: var(--bg);
+  overflow-x: hidden;
 }
 
 body {
@@ -51,6 +52,7 @@ body {
     radial-gradient(circle at 85% 10%, rgba(255, 255, 255, 0.92), transparent 28%),
     radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.58), transparent 36%),
     linear-gradient(180deg, #f7f6f2 0%, #f0efeb 100%);
+  overflow-x: hidden;
 }
 
 body::selection {
@@ -84,7 +86,7 @@ h3 {
 
 .page-shell {
   position: relative;
-  overflow: clip;
+  overflow-x: clip;
 }
 
 .page-shell::before {
@@ -422,6 +424,75 @@ h3 {
   gap: 12px;
 }
 
+.mobile-nav-toggle {
+  display: none;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.76);
+  cursor: pointer;
+}
+
+.mobile-nav-icon {
+  display: inline-grid;
+  gap: 4px;
+}
+
+.mobile-nav-icon span {
+  width: 16px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--copy);
+  transition: transform 180ms ease, opacity 180ms ease;
+}
+
+.mobile-nav-toggle-active .mobile-nav-icon span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.mobile-nav-toggle-active .mobile-nav-icon span:nth-child(2) {
+  opacity: 0;
+}
+
+.mobile-nav-toggle-active .mobile-nav-icon span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+.mobile-nav-shell {
+  display: none;
+}
+
+.mobile-nav-panel {
+  display: grid;
+  gap: 16px;
+  margin-top: 10px;
+  padding: 18px;
+  border-radius: 28px;
+}
+
+.mobile-nav-links {
+  display: grid;
+  gap: 4px;
+}
+
+.mobile-nav-links a {
+  padding: 12px 4px;
+  color: var(--copy);
+  font-size: 1rem;
+  border-bottom: 1px solid rgba(17, 17, 17, 0.06);
+}
+
+.mobile-nav-links a:last-child {
+  border-bottom: none;
+}
+
+.mobile-nav-cta {
+  width: 100%;
+}
+
 .language-toggle {
   display: inline-flex;
   align-items: center;
@@ -738,6 +809,13 @@ h3 {
 .reaction-demo-side {
   display: grid;
   gap: 18px;
+}
+
+.reaction-demo-stage > *,
+.reaction-demo-side > *,
+.workspace-grid > *,
+.leaderboard-grid > * {
+  min-width: 0;
 }
 
 .reaction-demo-side .ad-slot {
@@ -1477,6 +1555,8 @@ h3 {
 }
 
 .leaderboard-table {
+  display: block;
+  width: 100%;
   margin-top: 18px;
   overflow: hidden;
 }
@@ -2242,8 +2322,16 @@ h3 {
   }
 
   .header-cta {
-    min-width: 0;
-    padding-inline: 18px;
+    display: none;
+  }
+
+  .mobile-nav-toggle,
+  .mobile-nav-shell {
+    display: block;
+  }
+
+  .mobile-nav-panel {
+    padding: 20px;
   }
 
   .hero-shell {
@@ -2297,6 +2385,8 @@ h3 {
 
   .leaderboard-table {
     overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
     padding-bottom: 4px;
   }
 
@@ -2317,6 +2407,15 @@ h3 {
 
   .header-controls {
     margin-left: auto;
+  }
+
+  .header-cta {
+    display: none;
+  }
+
+  .mobile-nav-toggle,
+  .mobile-nav-shell {
+    display: block;
   }
 
   .leaderboard-grid,
@@ -2412,14 +2511,33 @@ h3 {
     gap: 12px;
     padding: 10px 12px;
     border-radius: 24px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .header-controls {
     gap: 8px;
+    flex-direction: row;
+    align-items: center;
   }
 
   .language-toggle {
-    margin-left: auto;
+    margin-left: 0;
+  }
+
+  .brand {
+    min-width: 0;
+  }
+
+  .brand-copy strong {
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  .mobile-nav-toggle {
+    width: 44px;
+    height: 44px;
   }
 
   .leaderboard-note {
@@ -2528,6 +2646,8 @@ h3 {
 
   .leaderboard-table {
     overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
     padding-bottom: 4px;
   }
 
