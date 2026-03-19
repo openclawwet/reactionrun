@@ -1,0 +1,40 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="reaction-run-bg" x1="14" y1="10" x2="79" y2="86" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0F1112" />
+      <stop offset="0.58" stop-color="#1E2529" />
+      <stop offset="1" stop-color="#355160" />
+    </linearGradient>
+    <linearGradient id="reaction-run-border" x1="14" y1="12" x2="79" y2="84" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="white" stop-opacity="0.54" />
+      <stop offset="1" stop-color="white" stop-opacity="0.14" />
+    </linearGradient>
+    <linearGradient id="reaction-run-glyph" x1="25" y1="21" x2="63" y2="73" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" />
+      <stop offset="1" stop-color="#E7EDF0" />
+    </linearGradient>
+    <linearGradient id="reaction-run-accent" x1="57" y1="22" x2="71" y2="36" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#C2E6F8" />
+      <stop offset="1" stop-color="#83ABC0" />
+    </linearGradient>
+  </defs>
+
+  <rect x="8" y="8" width="80" height="80" rx="24" fill="url(#reaction-run-bg)" />
+  <rect
+    x="8.5"
+    y="8.5"
+    width="79"
+    height="79"
+    rx="23.5"
+    stroke="url(#reaction-run-border)"
+    stroke-opacity="0.9"
+  />
+
+  <path
+    d="M28 24C28 21.7909 29.7909 20 32 20H46.5C58.0978 20 66 26.8709 66 37.5C66 45.5207 61.6274 51.4839 53.9346 53.9161L64.5149 68.1527C65.8225 69.9131 64.5659 72.4 62.373 72.4H60.1559C58.7266 72.4 57.3928 71.6857 56.6023 70.4945L46.3789 55.096H37.6V68.4C37.6 70.6091 35.8091 72.4 33.6 72.4H32C29.7909 72.4 28 70.6091 28 68.4V24ZM37.6 28.8V46.3H46.1C53.2791 46.3 56.4 43.0512 56.4 37.6C56.4 32.1488 53.2791 28.8 46.1 28.8H37.6Z"
+    fill="url(#reaction-run-glyph)"
+  />
+
+  <rect x="59.5" y="22.5" width="11.5" height="4.6" rx="2.3" fill="url(#reaction-run-accent)" />
+  <rect x="63.2" y="30.2" width="7.8" height="4.6" rx="2.3" fill="url(#reaction-run-accent)" opacity="0.54" />
+</svg>

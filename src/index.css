@@ -366,14 +366,16 @@ h3 {
 }
 
 .brand-mark {
-  display: grid;
-  place-items: center;
-  width: 40px;
+  display: block;
+  width: 44px;
   aspect-ratio: 1;
-  border-radius: 14px;
-  background: linear-gradient(180deg, #131313 0%, #2e3d44 100%);
-  color: #ffffff;
-  font-weight: 800;
+  flex: 0 0 auto;
+}
+
+.brand-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .brand-copy {

@@ -27,7 +27,9 @@ export function Header({ route }: HeaderProps) {
           aria-label={isGerman ? "Reaction Run Startseite" : "Reaction Run home"}
           onClick={handleHomeNav("top")}
         >
-          <span className="brand-mark">R</span>
+          <span className="brand-mark" aria-hidden="true">
+            <img src="/reaction-run-mark.svg" alt="" />
+          </span>
           <span className="brand-copy">
             <strong>Reaction Run</strong>
             <span>{isGerman ? "Reaktionszeit, verfeinert" : "Reaction time, refined"}</span>
