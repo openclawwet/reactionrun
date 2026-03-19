@@ -50,15 +50,28 @@ const adsTxtPath = path.join(publicDir, "ads.txt");
 
 fs.mkdirSync(publicDir, { recursive: true });
 
+const existingAdsTxt = fs.existsSync(adsTxtPath) ? fs.readFileSync(adsTxtPath, "utf8") : "";
+const existingPublisherLine = existingAdsTxt
+  .split(/\r?\n/)
+  .find((line) => /^google\.com,\s*pub-\d+,\s*DIRECT,\s*f08c47fec0942fa0$/i.test(line.trim()));
+
 const adsTxtContent = publisherId
   ? `google.com, ${publisherId}, DIRECT, f08c47fec0942fa0\n`
-  : [
-      "# Replace this placeholder before launching AdSense.",
-      "# Expected format:",
-      "# google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0",
-      "",
-    ].join("\n");
+  : existingPublisherLine
+    ? `${existingPublisherLine.trim()}\n`
+    : [
+        "# Replace this placeholder before launching AdSense.",
+        "# Expected format:",
+        "# google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0",
+        "",
+      ].join("\n");
 
 fs.writeFileSync(adsTxtPath, adsTxtContent, "utf8");
 
-console.log(`[adsense] ${publisherId ? "Generated" : "Prepared placeholder"} ${path.relative(root, adsTxtPath)}`);
+const modeLabel = publisherId
+  ? "Generated"
+  : existingPublisherLine
+    ? "Reused existing"
+    : "Prepared placeholder";
+
+console.log(`[adsense] ${modeLabel} ${path.relative(root, adsTxtPath)}`);
