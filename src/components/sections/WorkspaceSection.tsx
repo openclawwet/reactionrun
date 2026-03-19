@@ -132,6 +132,7 @@ export function WorkspaceSection() {
               }
               slotId={adsenseSecondarySlot}
               variant="compact"
+              layout="frame-only"
             />
           </div>
         </div>

@@ -15,6 +15,7 @@ type AdSlotProps = {
   description: string;
   slotId?: string;
   variant?: "feature" | "compact";
+  layout?: "default" | "frame-only";
 };
 
 export function AdSlot({
@@ -23,6 +24,7 @@ export function AdSlot({
   description,
   slotId,
   variant = "feature",
+  layout = "default",
 }: AdSlotProps) {
   const { locale } = useLocale();
   const { adsEnabled, adsLaunchState, consentState } = useMonetization();
@@ -107,17 +109,30 @@ export function AdSlot({
           ? "Slot fehlt"
           : "Slot missing";
 
-  return (
-    <div className={`ad-slot ad-slot-${variant}`}>
-      <div className="ad-slot-head">
-        <span className="subtle-pill">{label}</span>
-        <span className="status-chip status-chip-soft">{statusLabel}</span>
-      </div>
+  const className = [
+    "ad-slot",
+    `ad-slot-${variant}`,
+    `ad-slot-${layout}`,
+    layout === "frame-only" ? "glass-panel" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
-      <div className="ad-slot-copy">
-        <strong>{title}</strong>
-        <p>{description}</p>
-      </div>
+  return (
+    <div className={className}>
+      {layout === "default" ? (
+        <>
+          <div className="ad-slot-head">
+            <span className="subtle-pill">{label}</span>
+            <span className="status-chip status-chip-soft">{statusLabel}</span>
+          </div>
+
+          <div className="ad-slot-copy">
+            <strong>{title}</strong>
+            <p>{description}</p>
+          </div>
+        </>
+      ) : null}
 
       <div className="ad-slot-frame" id={elementId}>
         {adsEnabled && hasValidSlot ? (

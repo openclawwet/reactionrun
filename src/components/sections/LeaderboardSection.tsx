@@ -9,6 +9,7 @@ export function LeaderboardSection() {
   const { locale } = useLocale();
   const { leaderboardRows, leaderboardStatus, provisionalRank } = useReactionProduct();
   const isGerman = locale === "de";
+  const hasRows = leaderboardRows.length > 0;
 
   return (
     <section className="section" id="leaderboard">
@@ -46,28 +47,39 @@ export function LeaderboardSection() {
                 <span role="columnheader">{isGerman ? "Status" : "Form"}</span>
               </div>
 
-              {leaderboardRows.map((entry) => (
-                <div
-                  className={`leaderboard-row${entry.isCurrentUser ? " leaderboard-row-user" : ""}`}
-                  role="row"
-                  key={`${entry.tag}-${entry.rank}`}
-                >
-                  <span role="cell" className="leaderboard-rank">
-                    {entry.rank}
-                  </span>
-                  <span role="cell" className="leaderboard-player">
-                    <strong>{entry.name}</strong>
-                    <small>{entry.tag}</small>
-                  </span>
-                  <span role="cell">{entry.region}</span>
-                  <span role="cell" className="leaderboard-best">
-                    {entry.best}
-                  </span>
-                  <span role="cell" className="leaderboard-delta">
-                    {entry.delta}
-                  </span>
+              {hasRows ? (
+                leaderboardRows.map((entry) => (
+                  <div
+                    className={`leaderboard-row${entry.isCurrentUser ? " leaderboard-row-user" : ""}`}
+                    role="row"
+                    key={`${entry.tag}-${entry.rank}`}
+                  >
+                    <span role="cell" className="leaderboard-rank">
+                      {entry.rank}
+                    </span>
+                    <span role="cell" className="leaderboard-player">
+                      <strong>{entry.name}</strong>
+                      <small>{entry.tag}</small>
+                    </span>
+                    <span role="cell">{entry.region}</span>
+                    <span role="cell" className="leaderboard-best">
+                      {entry.best}
+                    </span>
+                    <span role="cell" className="leaderboard-delta">
+                      {entry.delta}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div className="leaderboard-empty" role="row">
+                  <strong>{isGerman ? "Noch keine Live-Eintraege." : "No live entries yet."}</strong>
+                  <p>
+                    {isGerman
+                      ? "Fuehre oben einen gueltigen Test durch und sende deinen Score ins Leaderboard, um den ersten echten Eintrag zu setzen."
+                      : "Run a valid test above and submit your score to the leaderboard to create the first real entry."}
+                  </p>
                 </div>
-              ))}
+              )}
             </div>
           </GlassPanel>
 
@@ -111,6 +123,7 @@ export function LeaderboardSection() {
                   : "A premium-safe ad placement outside the core ranking table."
               }
               slotId={adsensePrimarySlot}
+              layout="frame-only"
             />
           </div>
         </div>

@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "./Button";
 import { GlassPanel } from "./GlassPanel";
 import { adsenseTestSlot } from "../lib/ads";
-import { goToHomeSection } from "../lib/appRoute";
 import { useLocale } from "../state/LocaleContext";
 import { useReactionProduct } from "../state/ReactionProductContext";
 
@@ -11,41 +10,36 @@ type DemoPhase = "idle" | "armed" | "ready" | "result" | "tooSoon";
 
 const getPhaseCopy = (
   isGerman: boolean,
-): Record<DemoPhase, { badge: string; body: string; action: string }> => ({
+): Record<DemoPhase, { badge: string; body: string }> => ({
   idle: {
     badge: isGerman ? "Bereit" : "Standby",
     body: isGerman
       ? "Aktiviere das Signal und warte auf den Farbwechsel."
       : "Arm the signal and wait for the surface to change.",
-    action: isGerman ? "Signal aktivieren" : "Arm signal",
   },
   armed: {
     badge: isGerman ? "Aktivierung" : "Arming",
     body: isGerman
       ? "Das Signal erscheint nach einer zufaelligen Verzoegerung."
       : "The signal will appear after a randomized delay.",
-    action: isGerman ? "Auf Signal warten" : "Wait for signal",
   },
   ready: {
     badge: isGerman ? "Live" : "Live",
     body: isGerman
       ? "Reagiere genau in dem Moment, in dem sich die Flaeche aendert."
       : "Respond the instant the panel shifts.",
-    action: isGerman ? "Reaktion messen" : "Record reaction",
   },
   result: {
     badge: isGerman ? "Erfasst" : "Captured",
     body: isGerman
       ? "Starte die naechste Runde und schaerfe deine Session."
       : "Run another round to sharpen the session.",
-    action: isGerman ? "Nochmal starten" : "Run again",
   },
   tooSoon: {
     badge: isGerman ? "Zu frueh" : "Early tap",
     body: isGerman
       ? "Fokussiere dich neu und warte auf das visuelle Signal."
       : "Reset your focus and wait for the visual signal.",
-    action: isGerman ? "Erneut versuchen" : "Try again",
   },
 });
 
@@ -69,7 +63,6 @@ export function ReactionDemo() {
     publishMessage,
     publishStatus,
     showLeaderboard,
-    startNewSession,
     recordReaction,
     recordEarlyTap,
     updateGuestProfile,
@@ -113,13 +106,6 @@ export function ReactionDemo() {
     setPhase("armed");
   };
 
-  const resetSession = () => {
-    clearTimer(timerRef);
-    setStartTime(null);
-    startNewSession();
-    setPhase("idle");
-  };
-
   const handleSurfaceClick = () => {
     if (phase === "idle" || phase === "result" || phase === "tooSoon") {
       startRound();
@@ -153,7 +139,7 @@ export function ReactionDemo() {
   const copy = getPhaseCopy(isGerman)[phase];
 
   return (
-    <GlassPanel className="reaction-demo" id="demo">
+    <div className="reaction-demo" id="demo">
       <div className="reaction-demo-top">
         <div>
           <span className="subtle-pill">{isGerman ? "Live-Test" : "Live test"}</span>
@@ -185,23 +171,6 @@ export function ReactionDemo() {
         </button>
 
         <div className="reaction-demo-side">
-          <div className="reaction-demo-actions">
-            <Button onClick={startRound}>{copy.action}</Button>
-            <Button
-              href="/"
-              variant="secondary"
-              onClick={(event) => {
-                event.preventDefault();
-                goToHomeSection("stats");
-              }}
-            >
-              {isGerman ? "Statistiken ansehen" : "View stats"}
-            </Button>
-            <Button variant="ghost" onClick={resetSession}>
-              {isGerman ? "Neue Session starten" : "Start new session"}
-            </Button>
-          </div>
-
           <div className="reaction-entry-bar">
             <label className="field reaction-entry-field">
               <span>{isGerman ? "Nickname" : "Nickname"}</span>
@@ -272,14 +241,15 @@ export function ReactionDemo() {
             title={isGerman ? "Premium Sponsor-Slot im Testmodul" : "Premium sponsor slot in the test module"}
             description={
               isGerman
-                ? "Diese Flaeche ist fuer passende Partner direkt im ersten Screen reserviert, bleibt aber klar vom eigentlichen Reaktionstest getrennt. Ideal fuer Hardware, Performance-Tools oder Gaming-Equipment, ohne den Testfluss zu stoeren."
-                : "This surface is reserved for relevant partners directly in the first screen while staying clearly separated from the actual reaction test. Ideal for hardware, performance tools, or gaming gear without interrupting the test flow."
+                ? "Diese Flaeche ist fuer ausgewaehlte Performance-Partner im ersten Screen reserviert und bleibt klar vom Test getrennt. Passend fuer Hardware, Tools und Produkte, die zum Fokus der Seite passen."
+                : "This surface is reserved for selected performance partners in the first screen and stays clearly separated from the test itself. Ideal for hardware, tools, and products that fit the focus of the platform."
             }
             slotId={adsenseTestSlot}
             variant="compact"
+            layout="frame-only"
           />
         </div>
       </div>
-    </GlassPanel>
+    </div>
   );
 }

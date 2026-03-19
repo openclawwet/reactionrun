@@ -5,7 +5,6 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { leaderboardEntries } from "../data/siteContent";
 import {
   backendMode,
   fetchRemoteLeaderboard,
@@ -37,6 +36,7 @@ type GuestProfile = {
 };
 
 type PersistedReactionState = {
+  guestId: string;
   activeSessionId: string;
   rounds: ReactionRound[];
   earlyTaps: EarlyTapEntry[];
@@ -71,7 +71,9 @@ type LeaderboardRow = {
   isCurrentUser?: boolean;
 };
 
-type BaseLeaderboardRow = Omit<LeaderboardRow, "rank" | "isCurrentUser">;
+type BaseLeaderboardRow = Omit<LeaderboardRow, "rank" | "isCurrentUser"> & {
+  guestId?: string;
+};
 
 type SubmissionStatus = "idle" | "submitting" | "success" | "error";
 
@@ -119,6 +121,10 @@ const createId = (prefix: string) =>
   `${prefix}-${Math.random().toString(36).slice(2, 8)}-${Date.now().toString(36)}`;
 
 const createSessionId = () => createId("session");
+const createGuestId = () =>
+  typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+    ? crypto.randomUUID()
+    : createId("guest");
 
 const getNextPlayerNumber = () => {
   const fallbackStart = 1000 + Math.floor(Math.random() * 8000);
@@ -170,6 +176,7 @@ const createInitialState = (): PersistedReactionState => {
   const sessionId = createSessionId();
 
   return {
+    guestId: createGuestId(),
     activeSessionId: sessionId,
     rounds: [],
     earlyTaps: [],
@@ -189,11 +196,16 @@ const parseStoredState = (rawValue: string | null): PersistedReactionState | nul
       return null;
     }
 
+    const guestId =
+      typeof parsed.guestId === "string" && parsed.guestId.trim()
+        ? parsed.guestId
+        : createGuestId();
     const activeSessionId =
       typeof parsed.activeSessionId === "string" ? parsed.activeSessionId : createSessionId();
     const fallbackGuestProfile = createDefaultGuestProfile();
 
     return {
+      guestId,
       activeSessionId,
       rounds: Array.isArray(parsed.rounds)
         ? parsed.rounds.filter(
@@ -252,20 +264,12 @@ const formatImprovement = (value: number | null, isGerman: boolean) => {
 
 const parseBestTime = (value: string) => Number.parseInt(value.replace(/[^\d]/g, ""), 10);
 
-const buildFallbackLeaderboardRows = (): BaseLeaderboardRow[] =>
-  leaderboardEntries.map((entry) => ({
-    name: entry.name,
-    tag: entry.tag,
-    region: entry.region,
-    best: entry.best,
-    delta: entry.delta,
-  }));
-
 const buildRemoteLeaderboardRows = (
   entries: RemoteLeaderboardEntry[],
   isGerman: boolean,
 ): BaseLeaderboardRow[] =>
   entries.map((entry) => ({
+    guestId: entry.guestId,
     name: entry.displayName,
     tag: entry.tag,
     region: entry.region,
@@ -291,6 +295,7 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
     return parseStoredState(window.localStorage.getItem(STORAGE_KEY)) ?? createInitialState();
   });
   const [remoteLeaderboard, setRemoteLeaderboard] = useState<RemoteLeaderboardEntry[]>([]);
+  const [remoteRecentLeaderboard, setRemoteRecentLeaderboard] = useState<RemoteLeaderboardEntry[]>([]);
   const [leaderboardSyncStatus, setLeaderboardSyncStatus] = useState<SubmissionStatus>(
     backendMode === "live" ? "submitting" : "idle",
   );
@@ -329,14 +334,18 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
     setLeaderboardSyncStatus("submitting");
 
     try {
-      const entries = await fetchRemoteLeaderboard();
-      setRemoteLeaderboard(entries);
+      const [topEntries, recentEntries] = await Promise.all([
+        fetchRemoteLeaderboard("top", 100),
+        fetchRemoteLeaderboard("recent", 100),
+      ]);
+      setRemoteLeaderboard(topEntries);
+      setRemoteRecentLeaderboard(recentEntries);
       setLeaderboardSyncStatus("success");
       setLeaderboardSyncMessage(
-        entries.length
+        topEntries.length || recentEntries.length
           ? isGerman
-            ? "Live-Leaderboard synchronisiert."
-            : "Live leaderboard synced."
+            ? `Top ${topEntries.length} und letzte ${recentEntries.length} Live-Submissions synchronisiert.`
+            : `Top ${topEntries.length} and latest ${recentEntries.length} live submissions synced.`
           : isGerman
             ? "Live-Leaderboard verbunden und bereit fuer den ersten veroeffentlichten Score."
             : "Live leaderboard connected and ready for its first published score.",
@@ -469,10 +478,7 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
 
   const canSubmitScore = Boolean(bestReactionMs !== null && averageReactionMs !== null);
 
-  const remoteBaseRows = buildRemoteLeaderboardRows(remoteLeaderboard, isGerman);
-  const fallbackBaseRows = buildFallbackLeaderboardRows();
-  const usesRemoteLeaderboard = remoteBaseRows.length > 0;
-  const baseLeaderboardRows = usesRemoteLeaderboard ? remoteBaseRows : fallbackBaseRows;
+  const baseLeaderboardRows = buildRemoteLeaderboardRows(remoteLeaderboard, isGerman);
   const localRowName = guestDisplayName || (isGerman ? "Du" : "You");
 
   let provisionalRank: string | null = null;
@@ -480,6 +486,7 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
 
   if (bestReactionMs !== null) {
     const localPreviewRow: BaseLeaderboardRow = {
+      guestId: state.guestId,
       name: localRowName,
       tag: normalizedGuestTag || "@guest",
       region: guestRegion,
@@ -496,7 +503,9 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
               : "Preview",
     };
     const existingIndex = composableLeaderboard.findIndex(
-      (entry) => normalizeTag(entry.tag) === localPreviewRow.tag,
+      (entry) =>
+        (entry.guestId && entry.guestId === state.guestId) ||
+        (!entry.guestId && normalizeTag(entry.tag) === localPreviewRow.tag),
     );
 
     if (existingIndex >= 0) {
@@ -514,8 +523,12 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const leaderboardRows = composableLeaderboard.slice(0, 8).map((entry, index) => {
-    const isCurrentUser = normalizedGuestTag ? normalizeTag(entry.tag) === normalizedGuestTag : false;
+  const rankedLeaderboard = composableLeaderboard.slice(0, 100).map((entry, index) => {
+    const isCurrentUser = entry.guestId
+      ? entry.guestId === state.guestId
+      : normalizedGuestTag
+        ? normalizeTag(entry.tag) === normalizedGuestTag
+        : false;
 
     if (isCurrentUser) {
       provisionalRank = `#${String(index + 1).padStart(2, "0")}`;
@@ -527,6 +540,12 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
       isCurrentUser,
     };
   });
+
+  if (!provisionalRank && bestReactionMs !== null && composableLeaderboard.length > 100) {
+    provisionalRank = "#100+";
+  }
+
+  const leaderboardRows = rankedLeaderboard.slice(0, 8);
 
   const workspaceStats: StatCard[] = [
     {
@@ -583,16 +602,16 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
         ? leaderboardSyncStatus === "success"
           ? leaderboardLastSyncedAt
             ? isGerman
-              ? `Live-Leaderboard synchronisiert um ${formatSyncTime(leaderboardLastSyncedAt)}.`
-              : `Live leaderboard synced at ${formatSyncTime(leaderboardLastSyncedAt)}.`
+              ? `Top ${remoteLeaderboard.length} und letzte ${remoteRecentLeaderboard.length} Live-Submissions synchronisiert um ${formatSyncTime(leaderboardLastSyncedAt)}.`
+              : `Top ${remoteLeaderboard.length} and latest ${remoteRecentLeaderboard.length} live submissions synced at ${formatSyncTime(leaderboardLastSyncedAt)}.`
             : leaderboardSyncMessage
           : leaderboardSyncMessage ||
             (isGerman
               ? "Verbindung zum Live-Leaderboard wird aufgebaut..."
               : "Connecting to live leaderboard...")
         : isGerman
-          ? "Vorschau-Modus. Konfiguriere Supabase, um Beispieldaten durch Live-Submissions zu ersetzen."
-          : "Preview mode. Configure Supabase to replace example data with live submissions.";
+          ? "Vorschau-Modus. Reale Leaderboard-Eintraege erscheinen hier nach gueltigen Tests."
+          : "Preview mode. Real leaderboard entries appear here after valid test submissions.";
 
   const updateGuestProfile = (patch: Partial<GuestProfile>) => {
     setState((current) => ({
@@ -667,6 +686,7 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
 
     try {
       await publishGuestScore({
+        guestId: state.guestId,
         displayName: resolvedIdentity.displayName,
         tag: resolvedIdentity.tag,
         region: resolvedIdentity.region,
