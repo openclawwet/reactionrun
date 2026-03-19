@@ -1,0 +1,3 @@
+# Replace this placeholder before launching AdSense.
+# Expected format:
+# google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
