@@ -2235,6 +2235,77 @@ h3 {
   }
 }
 
+@media (min-width: 780px) and (max-width: 1179px) {
+  .site-header-inner {
+    padding: 12px 14px;
+    gap: 12px;
+  }
+
+  .header-cta {
+    min-width: 0;
+    padding-inline: 18px;
+  }
+
+  .hero-shell {
+    gap: 24px;
+  }
+
+  .hero-copy {
+    gap: 20px;
+  }
+
+  .hero-copy h1 {
+    max-width: 10ch;
+    font-size: clamp(4rem, 11vw, 5.8rem);
+  }
+
+  .hero-copy p {
+    max-width: 760px;
+    font-size: 1rem;
+    line-height: 1.74;
+  }
+
+  .reaction-demo-stage {
+    gap: 16px;
+  }
+
+  .reaction-surface {
+    min-height: min(62svh, 560px);
+  }
+
+  .reaction-demo-side {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .reaction-entry-bar,
+  .reaction-entry-feedback,
+  .reaction-metric-grid,
+  .reaction-session-panel,
+  .reaction-demo-side .ad-slot {
+    grid-column: 1 / -1;
+  }
+
+  .reaction-metric-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .workspace-grid,
+  .leaderboard-grid {
+    gap: 18px;
+  }
+
+  .leaderboard-table {
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .leaderboard-row {
+    width: max-content;
+    min-width: 760px;
+  }
+}
+
 @media (max-width: 1179px) {
   .nav-links {
     display: none;
@@ -2256,6 +2327,28 @@ h3 {
 }
 
 @media (max-width: 779px) {
+  .section {
+    padding: 54px 0;
+  }
+
+  .section:last-of-type {
+    padding-bottom: 64px;
+  }
+
+  .section-header {
+    margin-bottom: 24px;
+  }
+
+  .section-header h2 {
+    font-size: clamp(1.95rem, 10vw, 3rem);
+  }
+
+  .section-header p {
+    max-width: 34ch;
+    font-size: 0.97rem;
+    line-height: 1.72;
+  }
+
   .cookie-banner-wrap {
     left: 14px;
     right: 14px;
@@ -2278,6 +2371,16 @@ h3 {
   .cookie-toggle,
   .cookie-preference-head .status-chip {
     justify-self: start;
+  }
+
+  .cookie-banner-actions .button,
+  .cookie-preference-actions .button {
+    width: 100%;
+  }
+
+  .cookie-banner-links {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .site-header {
@@ -2307,6 +2410,8 @@ h3 {
 
   .site-header-inner {
     gap: 12px;
+    padding: 10px 12px;
+    border-radius: 24px;
   }
 
   .header-controls {
@@ -2342,15 +2447,100 @@ h3 {
     gap: 8px;
   }
 
+  .legal-status-actions .button,
+  .legal-hero-actions .button {
+    width: 100%;
+  }
+
+  .hero-section {
+    padding-top: 2rem;
+  }
+
+  .hero-copy {
+    gap: 18px;
+  }
+
   .hero-copy h1 {
     font-size: clamp(3rem, 18vw, 4.7rem);
-    max-width: 9.4ch;
+    max-width: 8.8ch;
+  }
+
+  .hero-copy p {
+    max-width: 34ch;
+    font-size: 0.98rem;
+    line-height: 1.72;
+  }
+
+  .hero-actions .button {
+    width: 100%;
+  }
+
+  .reaction-demo {
+    gap: 14px;
+  }
+
+  .reaction-demo-stage {
+    gap: 14px;
+  }
+
+  .reaction-demo-top h3,
+  .trend-panel h3 {
+    font-size: 1.35rem;
+  }
+
+  .demo-badge {
+    align-self: flex-start;
+  }
+
+  .reaction-entry-bar .button {
+    width: 100%;
+  }
+
+  .reaction-metric-grid,
+  .stats-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .reaction-session-panel,
+  .metric-card,
+  .stats-card,
+  .trend-panel,
+  .session-feed-panel,
+  .leaderboard-panel,
+  .leaderboard-side-panel {
+    padding: 20px;
+  }
+
+  .workspace-grid,
+  .leaderboard-grid {
+    gap: 14px;
+  }
+
+  .progress-chart {
+    margin-top: 18px;
+    padding: 12px 8px 0;
+    border-radius: 22px;
+  }
+
+  .leaderboard-panel {
+    padding: 20px;
+  }
+
+  .leaderboard-table {
+    overflow-x: auto;
+    padding-bottom: 4px;
   }
 
   .leaderboard-row {
-    grid-template-columns: 50px minmax(0, 1.6fr) 0.8fr 0.9fr 0.9fr;
+    grid-template-columns: 54px minmax(170px, 1.6fr) 84px 104px 92px;
+    width: max-content;
+    min-width: 100%;
     gap: 10px;
     font-size: 0.92rem;
+  }
+
+  .leaderboard-empty {
+    padding: 24px 4px 8px;
   }
 
   .phone-front {
@@ -2379,12 +2569,20 @@ h3 {
     width: 100%;
     justify-content: flex-start;
   }
+
+  .site-footer-inner {
+    gap: 14px;
+  }
 }
 
 @media (max-width: 560px) {
+  .section-header p {
+    max-width: none;
+  }
+
   .leaderboard-row {
-    grid-template-columns: 44px minmax(0, 1.4fr) 0.65fr 0.9fr 0.8fr;
-    padding-inline: 0;
+    grid-template-columns: 44px minmax(150px, 1.4fr) 74px 94px 84px;
+    min-width: 560px;
     font-size: 0.84rem;
   }
 
@@ -2394,11 +2592,17 @@ h3 {
 
   .reaction-surface {
     padding: 22px;
-    min-height: 220px;
+    min-height: min(56svh, 360px);
+    border-radius: 28px;
   }
 
   .reaction-surface strong {
     font-size: 3.6rem;
+  }
+
+  .reaction-surface p {
+    max-width: 18ch;
+    line-height: 1.64;
   }
 }
 
