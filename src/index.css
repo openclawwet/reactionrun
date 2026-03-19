@@ -2426,6 +2426,15 @@ h3 {
 }
 
 @media (max-width: 779px) {
+  :root {
+    --container-gutter: 12px;
+  }
+
+  .container {
+    width: calc(100% - 24px);
+    max-width: none;
+  }
+
   .section {
     padding: 54px 0;
   }
@@ -2574,6 +2583,15 @@ h3 {
     padding-top: 2rem;
   }
 
+  .hero-shell,
+  .hero-demo-wrap,
+  .hero-demo-wrap .reaction-demo,
+  .reaction-demo-stage,
+  .reaction-demo-side {
+    width: 100%;
+    max-width: 100%;
+  }
+
   .hero-copy {
     gap: 18px;
   }
@@ -2599,6 +2617,15 @@ h3 {
 
   .reaction-demo-stage {
     gap: 14px;
+  }
+
+  .reaction-demo-top,
+  .reaction-entry-bar,
+  .reaction-entry-feedback,
+  .reaction-metric-grid,
+  .reaction-session-panel {
+    width: 100%;
+    max-width: 100%;
   }
 
   .reaction-demo-top h3,
@@ -2627,6 +2654,12 @@ h3 {
   .leaderboard-panel,
   .leaderboard-side-panel {
     padding: 20px;
+  }
+
+  .reaction-session-panel,
+  .metric-card,
+  .stats-card {
+    border-radius: 18px;
   }
 
   .workspace-grid,
@@ -2696,6 +2729,10 @@ h3 {
 }
 
 @media (max-width: 560px) {
+  .container {
+    width: calc(100% - 20px);
+  }
+
   .section-header p {
     max-width: none;
   }
@@ -2711,18 +2748,30 @@ h3 {
   }
 
   .reaction-surface {
-    padding: 22px;
-    min-height: min(56svh, 360px);
+    padding: 18px;
+    min-height: min(52svh, 340px);
     border-radius: 28px;
   }
 
   .reaction-surface strong {
-    font-size: 3.6rem;
+    font-size: clamp(3rem, 16vw, 3.6rem);
   }
 
   .reaction-surface p {
-    max-width: 18ch;
+    max-width: 16ch;
     line-height: 1.64;
+  }
+
+  .reaction-demo-top,
+  .reaction-entry-feedback,
+  .reaction-session-panel,
+  .metric-card,
+  .stats-card {
+    padding-inline: 16px;
+  }
+
+  .reaction-metric-grid {
+    gap: 10px;
   }
 }
 
