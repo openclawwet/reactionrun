@@ -3,45 +3,51 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "./Button";
 import { GlassPanel } from "./GlassPanel";
 import { adsenseTestSlot } from "../lib/ads";
+import { goToHomeSection } from "../lib/appRoute";
+import { useLocale } from "../state/LocaleContext";
 import { useReactionProduct } from "../state/ReactionProductContext";
 
 type DemoPhase = "idle" | "armed" | "ready" | "result" | "tooSoon";
 
-const phaseCopy: Record<
-  DemoPhase,
-  { badge: string; title: string; body: string; action: string }
-> = {
+const getPhaseCopy = (
+  isGerman: boolean,
+): Record<DemoPhase, { badge: string; body: string; action: string }> => ({
   idle: {
-    badge: "Standby",
-    title: "Start when you're ready.",
-    body: "Arm the signal and wait for the surface to change.",
-    action: "Arm signal",
+    badge: isGerman ? "Bereit" : "Standby",
+    body: isGerman
+      ? "Aktiviere das Signal und warte auf den Farbwechsel."
+      : "Arm the signal and wait for the surface to change.",
+    action: isGerman ? "Signal aktivieren" : "Arm signal",
   },
   armed: {
-    badge: "Arming",
-    title: "Hold steady.",
-    body: "The signal will appear after a randomized delay.",
-    action: "Wait for signal",
+    badge: isGerman ? "Aktivierung" : "Arming",
+    body: isGerman
+      ? "Das Signal erscheint nach einer zufaelligen Verzoegerung."
+      : "The signal will appear after a randomized delay.",
+    action: isGerman ? "Auf Signal warten" : "Wait for signal",
   },
   ready: {
-    badge: "Live",
-    title: "Tap now.",
-    body: "Respond the instant the panel shifts.",
-    action: "Record reaction",
+    badge: isGerman ? "Live" : "Live",
+    body: isGerman
+      ? "Reagiere genau in dem Moment, in dem sich die Flaeche aendert."
+      : "Respond the instant the panel shifts.",
+    action: isGerman ? "Reaktion messen" : "Record reaction",
   },
   result: {
-    badge: "Captured",
-    title: "Reaction logged.",
-    body: "Run another round to sharpen the session.",
-    action: "Run again",
+    badge: isGerman ? "Erfasst" : "Captured",
+    body: isGerman
+      ? "Starte die naechste Runde und schaerfe deine Session."
+      : "Run another round to sharpen the session.",
+    action: isGerman ? "Nochmal starten" : "Run again",
   },
   tooSoon: {
-    badge: "Early tap",
-    title: "Too early.",
-    body: "Reset your focus and wait for the visual signal.",
-    action: "Try again",
+    badge: isGerman ? "Zu frueh" : "Early tap",
+    body: isGerman
+      ? "Fokussiere dich neu und warte auf das visuelle Signal."
+      : "Reset your focus and wait for the visual signal.",
+    action: isGerman ? "Erneut versuchen" : "Try again",
   },
-};
+});
 
 const clearTimer = (timerRef: { current: number | null }) => {
   if (timerRef.current !== null) {
@@ -51,6 +57,7 @@ const clearTimer = (timerRef: { current: number | null }) => {
 };
 
 export function ReactionDemo() {
+  const { locale } = useLocale();
   const {
     currentSessionRounds,
     currentSessionBestMs,
@@ -67,6 +74,7 @@ export function ReactionDemo() {
     recordEarlyTap,
     updateGuestProfile,
   } = useReactionProduct();
+  const isGerman = locale === "de";
   const [phase, setPhase] = useState<DemoPhase>("idle");
   const [startTime, setStartTime] = useState<number | null>(null);
   const timerRef = useRef<number | null>(null);
@@ -142,14 +150,14 @@ export function ReactionDemo() {
     });
   };
 
-  const copy = phaseCopy[phase];
+  const copy = getPhaseCopy(isGerman)[phase];
 
   return (
     <GlassPanel className="reaction-demo" id="demo">
       <div className="reaction-demo-top">
         <div>
-          <span className="subtle-pill">Live test</span>
-          <h3>Reaction test</h3>
+          <span className="subtle-pill">{isGerman ? "Live-Test" : "Live test"}</span>
+          <h3>{isGerman ? "Reaktionstest" : "Reaction test"}</h3>
         </div>
         <span className={`demo-badge demo-badge-${phase}`}>{copy.badge}</span>
       </div>
@@ -159,11 +167,19 @@ export function ReactionDemo() {
           type="button"
           className={`reaction-surface reaction-surface-${phase}`}
           onClick={handleSurfaceClick}
-          aria-label="Interactive reaction test surface"
+          aria-label={isGerman ? "Interaktive Flaeche fuer den Reaktionstest" : "Interactive reaction test surface"}
         >
           <span className="reaction-surface-caption">{copy.badge}</span>
           <strong>
-            {phase === "result" ? `${latest} ms` : phase === "ready" ? "Tap" : "Wait"}
+            {phase === "result"
+              ? `${latest} ms`
+              : phase === "ready"
+                ? isGerman
+                  ? "Jetzt"
+                  : "Tap"
+                : isGerman
+                  ? "Warten"
+                  : "Wait"}
           </strong>
           <p>{copy.body}</p>
         </button>
@@ -171,17 +187,24 @@ export function ReactionDemo() {
         <div className="reaction-demo-side">
           <div className="reaction-demo-actions">
             <Button onClick={startRound}>{copy.action}</Button>
-            <Button href="#stats" variant="secondary">
-              View stats
+            <Button
+              href="/"
+              variant="secondary"
+              onClick={(event) => {
+                event.preventDefault();
+                goToHomeSection("stats");
+              }}
+            >
+              {isGerman ? "Statistiken ansehen" : "View stats"}
             </Button>
             <Button variant="ghost" onClick={resetSession}>
-              Start new session
+              {isGerman ? "Neue Session starten" : "Start new session"}
             </Button>
           </div>
 
           <div className="reaction-entry-bar">
             <label className="field reaction-entry-field">
-              <span>Nickname</span>
+              <span>{isGerman ? "Nickname" : "Nickname"}</span>
               <input
                 type="text"
                 placeholder="Player 4821"
@@ -192,7 +215,7 @@ export function ReactionDemo() {
               />
             </label>
             <Button variant="secondary" onClick={handleShowLeaderboard}>
-              Show leaderboard
+              {isGerman ? "Leaderboard anzeigen" : "Show leaderboard"}
             </Button>
           </div>
 
@@ -204,11 +227,11 @@ export function ReactionDemo() {
 
           <div className="reaction-metric-grid">
             <GlassPanel className="metric-card">
-              <span>Best</span>
+              <span>{isGerman ? "Bestzeit" : "Best"}</span>
               <strong>{best === null ? "--" : `${best} ms`}</strong>
             </GlassPanel>
             <GlassPanel className="metric-card">
-              <span>Average</span>
+              <span>{isGerman ? "Durchschnitt" : "Average"}</span>
               <strong>{average === null ? "--" : `${average} ms`}</strong>
             </GlassPanel>
             <GlassPanel className="metric-card">
@@ -224,25 +247,34 @@ export function ReactionDemo() {
           <GlassPanel className="reaction-session-panel">
             <div className="session-strip">
               <div className="session-strip-copy">
-                <span>Current session</span>
-                <strong>{currentSessionRounds.length} rounds</strong>
+                <span>{isGerman ? "Aktuelle Session" : "Current session"}</span>
+                <strong>
+                  {currentSessionRounds.length} {isGerman ? "Runden" : "rounds"}
+                </strong>
               </div>
-              <div className="session-history" aria-label="Recent reaction attempts">
+              <div
+                className="session-history"
+                aria-label={isGerman ? "Letzte Reaktionsversuche" : "Recent reaction attempts"}
+              >
                 {currentSessionRounds.length ? (
                   currentSessionRounds.map((attempt, index) => (
                     <span key={`${attempt}-${index}`}>{attempt} ms</span>
                   ))
                 ) : (
-                  <span>New session ready</span>
+                  <span>{isGerman ? "Neue Session bereit" : "New session ready"}</span>
                 )}
               </div>
             </div>
           </GlassPanel>
 
           <AdSlot
-            label="Sponsored"
-            title="Test module sponsor slot"
-            description="A separated ad surface for the live test area, kept outside the core interaction panel."
+            label={isGerman ? "Werbung" : "Sponsored"}
+            title={isGerman ? "Sponsor-Slot im Testmodul" : "Test module sponsor slot"}
+            description={
+              isGerman
+                ? "Eine getrennte Werbeflaeche fuer den Live-Testbereich, bewusst ausserhalb der Kerninteraktion."
+                : "A separated ad surface for the live test area, kept outside the core interaction panel."
+            }
             slotId={adsenseTestSlot}
             variant="compact"
           />

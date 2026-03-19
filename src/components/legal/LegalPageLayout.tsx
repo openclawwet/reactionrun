@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Button } from "../Button";
 import { goToHomeSection } from "../../lib/appRoute";
+import { useLocale } from "../../state/LocaleContext";
 
 type LegalPageLayoutProps = {
   eyebrow: string;
@@ -15,6 +16,9 @@ export function LegalPageLayout({
   description,
   children,
 }: LegalPageLayoutProps) {
+  const { locale } = useLocale();
+  const isGerman = locale === "de";
+
   return (
     <section className="legal-page">
       <div className="container">
@@ -33,10 +37,10 @@ export function LegalPageLayout({
                 goToHomeSection("top");
               }}
             >
-              Zur Startseite
+              {isGerman ? "Zur Startseite" : "Back to home"}
             </Button>
             <Button href="#cookies" variant="secondary">
-              Cookie-Einstellungen
+              {isGerman ? "Cookie-Einstellungen" : "Cookie settings"}
             </Button>
           </div>
         </div>

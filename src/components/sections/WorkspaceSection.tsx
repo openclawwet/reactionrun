@@ -3,9 +3,11 @@ import { GlassPanel } from "../GlassPanel";
 import { ProgressChart } from "../ProgressChart";
 import { SectionHeader } from "../SectionHeader";
 import { adsenseSecondarySlot } from "../../lib/ads";
+import { useLocale } from "../../state/LocaleContext";
 import { useReactionProduct } from "../../state/ReactionProductContext";
 
 export function WorkspaceSection() {
+  const { locale } = useLocale();
   const {
     activeDays,
     earlyTapCount,
@@ -15,14 +17,23 @@ export function WorkspaceSection() {
     stabilityBandMs,
     workspaceStats,
   } = useReactionProduct();
+  const isGerman = locale === "de";
 
   return (
     <section className="section workspace-section" id="stats">
       <div className="container">
         <SectionHeader
-          eyebrow="Statistics"
-          title="Everything important, immediately after the run."
-          description="Best time, average pace, recent rounds, and a simple progress view. No extra dashboard layer, just the stats that matter."
+          eyebrow={isGerman ? "Statistiken" : "Statistics"}
+          title={
+            isGerman
+              ? "Alles Wichtige, direkt nach dem Run."
+              : "Everything important, immediately after the run."
+          }
+          description={
+            isGerman
+              ? "Bestzeit, Durchschnitt, letzte Runden und ein klarer Fortschrittsverlauf. Kein zusaetzliches Dashboard, nur die Statistiken, die wirklich zaehlen."
+              : "Best time, average pace, recent rounds, and a simple progress view. No extra dashboard layer, just the stats that matter."
+          }
         />
 
         <div className="workspace-grid">
@@ -39,12 +50,16 @@ export function WorkspaceSection() {
 
             <GlassPanel className="trend-panel">
               <div className="trend-panel-copy">
-                <span className="subtle-pill">Progress</span>
-                <h3>Track improvement at a glance.</h3>
+                <span className="subtle-pill">{isGerman ? "Fortschritt" : "Progress"}</span>
+                <h3>{isGerman ? "Verbesserung auf einen Blick." : "Track improvement at a glance."}</h3>
                 <p>
                   {hasRecordedRounds
-                    ? "Your recent sessions turn into a simple performance curve right away, so it is easy to see if you are getting faster or more stable."
-                    : "As soon as you record your first valid rounds, your local progress curve starts building here."}
+                    ? isGerman
+                      ? "Deine letzten Sessions werden sofort zu einer klaren Leistungskurve, damit du direkt siehst, ob du schneller oder stabiler wirst."
+                      : "Your recent sessions turn into a simple performance curve right away, so it is easy to see if you are getting faster or more stable."
+                    : isGerman
+                      ? "Sobald du deine ersten gueltigen Runden speicherst, entsteht hier dein lokaler Fortschrittsverlauf."
+                      : "As soon as you record your first valid rounds, your local progress curve starts building here."}
                 </p>
               </div>
 
@@ -52,17 +67,21 @@ export function WorkspaceSection() {
 
               <div className="trend-summary">
                 <div>
-                  <span>Stability band</span>
+                  <span>{isGerman ? "Stabilitaetsband" : "Stability band"}</span>
                   <strong>
-                    {stabilityBandMs === null ? "Calibrating" : `±${stabilityBandMs} ms`}
+                    {stabilityBandMs === null
+                      ? isGerman
+                        ? "Kalibrierung"
+                        : "Calibrating"
+                      : `±${stabilityBandMs} ms`}
                   </strong>
                 </div>
                 <div>
-                  <span>Early taps</span>
+                  <span>{isGerman ? "Fruehe Taps" : "Early taps"}</span>
                   <strong>{earlyTapCount}</strong>
                 </div>
                 <div>
-                  <span>Active days</span>
+                  <span>{isGerman ? "Aktive Tage" : "Active days"}</span>
                   <strong>{activeDays || 0}</strong>
                 </div>
               </div>
@@ -72,8 +91,8 @@ export function WorkspaceSection() {
           <div className="workspace-rail">
             <GlassPanel className="session-feed-panel">
               <div className="session-feed-top">
-                <span className="subtle-pill">Recent rounds</span>
-                <strong>Latest attempts</strong>
+                <span className="subtle-pill">{isGerman ? "Letzte Runden" : "Recent rounds"}</span>
+                <strong>{isGerman ? "Neueste Versuche" : "Latest attempts"}</strong>
               </div>
 
               <div className="session-feed-list">
@@ -92,17 +111,25 @@ export function WorkspaceSection() {
                   ))
                 ) : (
                   <div className="session-feed-empty">
-                    <strong>No recorded rounds yet.</strong>
-                    <p>Finish the test above once and your recent attempts start appearing here.</p>
+                    <strong>{isGerman ? "Noch keine gespeicherten Runden." : "No recorded rounds yet."}</strong>
+                    <p>
+                      {isGerman
+                        ? "Schliesse den Test oben einmal ab, dann erscheinen hier sofort deine letzten Versuche."
+                        : "Finish the test above once and your recent attempts start appearing here."}
+                    </p>
                   </div>
                 )}
               </div>
             </GlassPanel>
 
             <AdSlot
-              label="Sponsor"
-              title="Clean support slot"
-              description="A separated ad surface that keeps the test and the stats area focused."
+              label={isGerman ? "Werbung" : "Sponsor"}
+              title={isGerman ? "Sauberer Sponsor-Slot" : "Clean support slot"}
+              description={
+                isGerman
+                  ? "Eine getrennte Werbeflaeche, die Test und Statistikbereich fokussiert haelt."
+                  : "A separated ad surface that keeps the test and the stats area focused."
+              }
               slotId={adsenseSecondarySlot}
               variant="compact"
             />

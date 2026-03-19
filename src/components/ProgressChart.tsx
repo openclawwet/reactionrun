@@ -1,3 +1,5 @@
+import { useLocale } from "../state/LocaleContext";
+
 type ProgressChartProps = {
   points: ReadonlyArray<{
     label: string;
@@ -6,12 +8,19 @@ type ProgressChartProps = {
 };
 
 export function ProgressChart({ points }: ProgressChartProps) {
+  const { locale } = useLocale();
+  const isGerman = locale === "de";
+
   if (!points.length) {
     return (
       <div className="progress-chart progress-chart-empty">
         <div className="progress-chart-empty-copy">
-          <strong>No trend yet</strong>
-          <p>Your improvement path appears after the first saved rounds.</p>
+          <strong>{isGerman ? "Noch kein Trend" : "No trend yet"}</strong>
+          <p>
+            {isGerman
+              ? "Dein Verbesserungsverlauf erscheint nach den ersten gespeicherten Runden."
+              : "Your improvement path appears after the first saved rounds."}
+          </p>
         </div>
       </div>
     );
@@ -52,7 +61,11 @@ export function ProgressChart({ points }: ProgressChartProps) {
       <svg
         viewBox={`0 0 ${width} ${height}`}
         role="img"
-        aria-label="Reaction time improvement trend across recent sessions"
+        aria-label={
+          isGerman
+            ? "Verlauf der Reaktionszeit ueber die letzten Sessions"
+            : "Reaction time improvement trend across recent sessions"
+        }
       >
         <defs>
           <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">

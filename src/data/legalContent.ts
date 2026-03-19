@@ -2,31 +2,32 @@ export const siteLegalProfile = {
   brandName: "Reaction Run",
   domain: "reactionrun.com",
   websiteUrl: "https://reactionrun.com",
-  contactEmail: "team@reactionrun.com",
+  contactEmail: "kontakt@webentwicklungthomsen.de",
 };
 
 export const legalEntity = {
-  operatorName: "[Bitte Betreibername ergänzen]",
-  legalForm: "[Bitte Rechtsform ergänzen]",
-  representative: "[Bitte vertretungsberechtigte Person ergänzen]",
-  street: "[Bitte Straße und Hausnummer ergänzen]",
-  postalCode: "[Bitte PLZ ergänzen]",
-  city: "[Bitte Ort ergänzen]",
-  country: "Deutschland",
-  phone: "[Optional: Telefonnummer ergänzen]",
-  registerCourt: "[Falls vorhanden: Registergericht ergänzen]",
-  registerNumber: "[Falls vorhanden: Registernummer ergänzen]",
-  vatId: "[Falls vorhanden: USt-IdNr. ergänzen]",
-  contentResponsible: "[Bitte verantwortliche Person nach § 18 Abs. 2 MStV ergänzen]",
+  operatorName: "Webentwicklung Thomsen",
+  legalForm: "",
+  representative: "",
+  street: "Westerende",
+  postalCode: "25884",
+  city: "Norstedt",
+  country: "Germany",
+  phone: "",
+  registerCourt: "",
+  registerNumber: "",
+  vatId: "",
+  contentResponsible: "",
 };
 
 export const infrastructureProfile = {
-  hostingProvider: "[Bitte Hosting-Anbieter ergänzen]",
-  hostingCountry: "[Bitte Land des Hostings ergänzen]",
-  serverLogRetention: "[Bitte Speicherdauer der Server-Logs ergänzen]",
-  emailProvider: "[Bitte E-Mail-Anbieter ergänzen]",
+  hostingProvider: "",
+  hostingCountry: "Outside the EU / EEA",
+  serverLogRetention:
+    "Server log data is stored only as long as technically required for secure and stable operation.",
+  emailProvider: "",
   transferSafeguards:
-    "Je nach Anbieter z. B. ein Angemessenheitsbeschluss oder EU-Standardvertragsklauseln.",
+    "Where providers process data in third countries, transfers are based on an adequacy decision or on Standard Contractual Clauses where required.",
 };
 
 export const adProviderProfile = {

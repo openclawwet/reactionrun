@@ -328,6 +328,7 @@ h3 {
 
 .button:focus-visible,
 .reaction-surface:focus-visible,
+.language-toggle-button:focus-visible,
 .nav-links a:focus-visible,
 .footer-links a:focus-visible,
 .brand:focus-visible {
@@ -410,6 +411,55 @@ h3 {
 
 .header-cta {
   min-width: 132px;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.language-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid rgba(17, 17, 17, 0.06);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.74);
+}
+
+.language-toggle-button {
+  min-width: 44px;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition:
+    background 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.language-toggle-button:hover {
+  color: var(--copy);
+}
+
+.language-toggle-button-active {
+  background: linear-gradient(180deg, rgba(17, 17, 17, 0.96), rgba(33, 33, 33, 0.92));
+  color: #ffffff;
+  box-shadow:
+    0 10px 18px rgba(17, 17, 17, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
 }
 
 .hero-section {
@@ -1875,6 +1925,10 @@ h3 {
     border-radius: 26px;
   }
 
+  .header-controls {
+    margin-left: auto;
+  }
+
   .leaderboard-grid,
   .platform-grid,
   .workspace-grid {
@@ -1906,6 +1960,18 @@ h3 {
   .brand-copy span,
   .header-cta {
     display: none;
+  }
+
+  .site-header-inner {
+    gap: 12px;
+  }
+
+  .header-controls {
+    gap: 8px;
+  }
+
+  .language-toggle {
+    margin-left: auto;
   }
 
   .leaderboard-note {

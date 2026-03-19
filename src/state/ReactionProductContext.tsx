@@ -14,6 +14,7 @@ import {
   type BackendMode,
   type RemoteLeaderboardEntry,
 } from "../services/reactionBackend";
+import { useLocale } from "./LocaleContext";
 
 type ReactionRound = {
   id: string;
@@ -228,18 +229,6 @@ const parseStoredState = (rawValue: string | null): PersistedReactionState | nul
   }
 };
 
-const formatTime = (isoString: string) =>
-  new Intl.DateTimeFormat("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(isoString));
-
-const formatSyncTime = (isoString: string) =>
-  new Intl.DateTimeFormat("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(isoString));
-
 const average = (values: number[]) =>
   values.length
     ? Math.round(values.reduce((total, value) => total + value, 0) / values.length)
@@ -248,9 +237,9 @@ const average = (values: number[]) =>
 const formatMilliseconds = (value: number | null, fallback = "--") =>
   value === null ? fallback : `${value} ms`;
 
-const formatImprovement = (value: number | null) => {
+const formatImprovement = (value: number | null, isGerman: boolean) => {
   if (value === null) {
-    return "Calibrating";
+    return isGerman ? "Kalibrierung" : "Calibrating";
   }
 
   if (value === 0) {
@@ -272,16 +261,28 @@ const buildFallbackLeaderboardRows = (): BaseLeaderboardRow[] =>
     delta: entry.delta,
   }));
 
-const buildRemoteLeaderboardRows = (entries: RemoteLeaderboardEntry[]): BaseLeaderboardRow[] =>
+const buildRemoteLeaderboardRows = (
+  entries: RemoteLeaderboardEntry[],
+  isGerman: boolean,
+): BaseLeaderboardRow[] =>
   entries.map((entry) => ({
     name: entry.displayName,
     tag: entry.tag,
     region: entry.region,
     best: `${entry.bestReactionMs} ms`,
-    delta: entry.claimRequested ? "Claim" : entry.isGuest ? "Guest" : "Live",
+    delta: entry.claimRequested
+      ? "Claim"
+      : entry.isGuest
+        ? isGerman
+          ? "Gast"
+          : "Guest"
+        : "Live",
   }));
 
 export function ReactionProductProvider({ children }: { children: ReactNode }) {
+  const { locale } = useLocale();
+  const isGerman = locale === "de";
+  const timeLocale = isGerman ? "de-DE" : "en-US";
   const [state, setState] = useState<PersistedReactionState>(() => {
     if (typeof window === "undefined") {
       return createInitialState();
@@ -302,10 +303,26 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }, [state]);
 
+  const formatTime = (isoString: string) =>
+    new Intl.DateTimeFormat(timeLocale, {
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(isoString));
+
+  const formatSyncTime = (isoString: string) =>
+    new Intl.DateTimeFormat(timeLocale, {
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(isoString));
+
   const refreshLeaderboard = async () => {
     if (backendMode !== "live") {
       setLeaderboardSyncStatus("idle");
-      setLeaderboardSyncMessage("Preview mode active. Add Supabase keys to enable live rankings.");
+      setLeaderboardSyncMessage(
+        isGerman
+          ? "Vorschau aktiv. Hinterlege Supabase-Keys, um Live-Rankings zu aktivieren."
+          : "Preview mode active. Add Supabase keys to enable live rankings.",
+      );
       return;
     }
 
@@ -317,13 +334,21 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
       setLeaderboardSyncStatus("success");
       setLeaderboardSyncMessage(
         entries.length
-          ? "Live leaderboard synced."
-          : "Live leaderboard connected and ready for its first published score.",
+          ? isGerman
+            ? "Live-Leaderboard synchronisiert."
+            : "Live leaderboard synced."
+          : isGerman
+            ? "Live-Leaderboard verbunden und bereit fuer den ersten veroeffentlichten Score."
+            : "Live leaderboard connected and ready for its first published score.",
       );
       setLeaderboardLastSyncedAt(new Date().toISOString());
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : "Could not load the live leaderboard.";
+        error instanceof Error
+          ? error.message
+          : isGerman
+            ? "Das Live-Leaderboard konnte nicht geladen werden."
+            : "Could not load the live leaderboard.";
       setLeaderboardSyncStatus("error");
       setLeaderboardSyncMessage(message);
     }
@@ -335,8 +360,12 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    setLeaderboardSyncMessage("Preview mode active. Add Supabase keys to enable live rankings.");
-  }, []);
+    setLeaderboardSyncMessage(
+      isGerman
+        ? "Vorschau aktiv. Hinterlege Supabase-Keys, um Live-Rankings zu aktivieren."
+        : "Preview mode active. Add Supabase keys to enable live rankings.",
+    );
+  }, [isGerman]);
 
   const currentSessionRounds = state.rounds
     .filter((entry) => entry.sessionId === state.activeSessionId)
@@ -415,10 +444,20 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
     .map((entry, index): SessionFeedItem => {
       const isActiveSession = entry.sessionId === state.activeSessionId;
       return {
-        label: index === 0 ? "Latest round" : "Recorded round",
+        label: index === 0
+          ? isGerman
+            ? "Letzte Runde"
+            : "Latest round"
+          : isGerman
+            ? "Gespeicherte Runde"
+            : "Recorded round",
         detail: isActiveSession
-          ? "Captured in the current local session"
-          : "Restored from a recent local session",
+          ? isGerman
+            ? "In der aktuellen lokalen Session erfasst"
+            : "Captured in the current local session"
+          : isGerman
+            ? "Aus einer letzten lokalen Session wiederhergestellt"
+            : "Restored from a recent local session",
         time: formatTime(entry.createdAt),
         value: `${entry.value} ms`,
       };
@@ -430,11 +469,11 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
 
   const canSubmitScore = Boolean(bestReactionMs !== null && averageReactionMs !== null);
 
-  const remoteBaseRows = buildRemoteLeaderboardRows(remoteLeaderboard);
+  const remoteBaseRows = buildRemoteLeaderboardRows(remoteLeaderboard, isGerman);
   const fallbackBaseRows = buildFallbackLeaderboardRows();
   const usesRemoteLeaderboard = remoteBaseRows.length > 0;
   const baseLeaderboardRows = usesRemoteLeaderboard ? remoteBaseRows : fallbackBaseRows;
-  const localRowName = guestDisplayName || "You";
+  const localRowName = guestDisplayName || (isGerman ? "Du" : "You");
 
   let provisionalRank: string | null = null;
   const composableLeaderboard = [...baseLeaderboardRows];
@@ -445,7 +484,16 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
       tag: normalizedGuestTag || "@guest",
       region: guestRegion,
       best: `${bestReactionMs} ms`,
-      delta: publishStatus === "success" ? "Live" : backendMode === "live" ? "Local" : "Preview",
+      delta:
+        publishStatus === "success"
+          ? "Live"
+          : backendMode === "live"
+            ? isGerman
+              ? "Lokal"
+              : "Local"
+            : isGerman
+              ? "Vorschau"
+              : "Preview",
     };
     const existingIndex = composableLeaderboard.findIndex(
       (entry) => normalizeTag(entry.tag) === localPreviewRow.tag,
@@ -482,33 +530,49 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
 
   const workspaceStats: StatCard[] = [
     {
-      label: "Best reaction",
-      value: formatMilliseconds(bestReactionMs, "Awaiting run"),
+      label: isGerman ? "Beste Reaktion" : "Best reaction",
+      value: formatMilliseconds(bestReactionMs, isGerman ? "Warte auf Run" : "Awaiting run"),
       meta: hasRecordedRounds
-        ? "Lowest saved result on this device"
-        : "Your first valid round sets the baseline here",
+        ? isGerman
+          ? "Niedrigstes gespeichertes Ergebnis auf diesem Geraet"
+          : "Lowest saved result on this device"
+        : isGerman
+          ? "Deine erste gueltige Runde setzt hier die Basis"
+          : "Your first valid round sets the baseline here",
     },
     {
-      label: "Average",
+      label: isGerman ? "Durchschnitt" : "Average",
       value: formatMilliseconds(averageReactionMs, "--"),
       meta: hasRecordedRounds
-        ? `Across ${recordedRoundCount} recorded rounds`
-        : "Average appears once you have measured input",
+        ? isGerman
+          ? `Ueber ${recordedRoundCount} gespeicherte Runden`
+          : `Across ${recordedRoundCount} recorded rounds`
+        : isGerman
+          ? "Der Durchschnitt erscheint nach den ersten gemessenen Inputs"
+          : "Average appears once you have measured input",
     },
     {
-      label: "Sessions",
+      label: isGerman ? "Sessions" : "Sessions",
       value: totalSessions ? `${totalSessions}` : "0",
       meta: totalSessions
-        ? `${activeDays} active day${activeDays === 1 ? "" : "s"} captured locally`
-        : "New local profile, ready for the first session",
+        ? isGerman
+          ? `${activeDays} aktive${activeDays === 1 ? "r Tag" : " Tage"} lokal erfasst`
+          : `${activeDays} active day${activeDays === 1 ? "" : "s"} captured locally`
+        : isGerman
+          ? "Neues lokales Profil, bereit fuer die erste Session"
+          : "New local profile, ready for the first session",
     },
     {
-      label: "Improvement",
-      value: formatImprovement(improvementMs),
+      label: isGerman ? "Verbesserung" : "Improvement",
+      value: formatImprovement(improvementMs, isGerman),
       meta:
         improvementMs === null
-          ? "Needs a few rounds before a trend becomes credible"
-          : "Compared to your earliest recorded sample",
+          ? isGerman
+            ? "Braucht einige Runden, bevor ein Trend belastbar wird"
+            : "Needs a few rounds before a trend becomes credible"
+          : isGerman
+            ? "Verglichen mit deinem fruehesten gespeicherten Sample"
+            : "Compared to your earliest recorded sample",
     },
   ];
 
@@ -518,10 +582,17 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
       : backendMode === "live"
         ? leaderboardSyncStatus === "success"
           ? leaderboardLastSyncedAt
-            ? `Live leaderboard synced at ${formatSyncTime(leaderboardLastSyncedAt)}.`
+            ? isGerman
+              ? `Live-Leaderboard synchronisiert um ${formatSyncTime(leaderboardLastSyncedAt)}.`
+              : `Live leaderboard synced at ${formatSyncTime(leaderboardLastSyncedAt)}.`
             : leaderboardSyncMessage
-          : leaderboardSyncMessage || "Connecting to live leaderboard..."
-        : "Preview mode. Configure Supabase to replace example data with live submissions.";
+          : leaderboardSyncMessage ||
+            (isGerman
+              ? "Verbindung zum Live-Leaderboard wird aufgebaut..."
+              : "Connecting to live leaderboard...")
+        : isGerman
+          ? "Vorschau-Modus. Konfiguriere Supabase, um Beispieldaten durch Live-Submissions zu ersetzen."
+          : "Preview mode. Configure Supabase to replace example data with live submissions.";
 
   const updateGuestProfile = (patch: Partial<GuestProfile>) => {
     setState((current) => ({
@@ -574,7 +645,9 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
     if (!canSubmitScore || bestReactionMs === null || averageReactionMs === null) {
       setPublishStatus("idle");
       setPublishMessage(
-        `${resolvedIdentity.displayName} is ready. Finish a valid round to enter the leaderboard.`,
+        isGerman
+          ? `${resolvedIdentity.displayName} ist bereit. Absolviere eine gueltige Runde, um ins Leaderboard zu kommen.`
+          : `${resolvedIdentity.displayName} is ready. Finish a valid round to enter the leaderboard.`,
       );
       return;
     }
@@ -582,7 +655,9 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
     if (backendMode !== "live") {
       setPublishStatus("success");
       setPublishMessage(
-        `${resolvedIdentity.displayName} is now connected to the leaderboard preview with ${bestReactionMs} ms.`,
+        isGerman
+          ? `${resolvedIdentity.displayName} ist jetzt mit ${bestReactionMs} ms in der Leaderboard-Vorschau verbunden.`
+          : `${resolvedIdentity.displayName} is now connected to the leaderboard preview with ${bestReactionMs} ms.`,
       );
       return;
     }
@@ -604,11 +679,17 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
       await refreshLeaderboard();
       setPublishStatus("success");
       setPublishMessage(
-        `${resolvedIdentity.displayName} is now live on the leaderboard with ${bestReactionMs} ms.`,
+        isGerman
+          ? `${resolvedIdentity.displayName} ist jetzt mit ${bestReactionMs} ms live im Leaderboard.`
+          : `${resolvedIdentity.displayName} is now live on the leaderboard with ${bestReactionMs} ms.`,
       );
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : "Could not connect this score to the leaderboard.";
+        error instanceof Error
+          ? error.message
+          : isGerman
+            ? "Dieser Score konnte nicht mit dem Leaderboard verbunden werden."
+            : "Could not connect this score to the leaderboard.";
       setPublishStatus("error");
       setPublishMessage(message);
     }

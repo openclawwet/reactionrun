@@ -2,10 +2,13 @@ import { AdSlot } from "../AdSlot";
 import { GlassPanel } from "../GlassPanel";
 import { SectionHeader } from "../SectionHeader";
 import { adsensePrimarySlot } from "../../lib/ads";
+import { useLocale } from "../../state/LocaleContext";
 import { useReactionProduct } from "../../state/ReactionProductContext";
 
 export function LeaderboardSection() {
+  const { locale } = useLocale();
   const { leaderboardRows, leaderboardStatus, provisionalRank } = useReactionProduct();
+  const isGerman = locale === "de";
 
   return (
     <section className="section" id="leaderboard">
@@ -13,26 +16,34 @@ export function LeaderboardSection() {
         <SectionHeader
           eyebrow="Leaderboard"
           title="Leaderboard"
-          description="Compare your best reaction time instantly and see where your current score lands."
+          description={
+            isGerman
+              ? "Vergleiche deine beste Reaktionszeit sofort und sieh, wo dein aktueller Score landet."
+              : "Compare your best reaction time instantly and see where your current score lands."
+          }
         />
 
         <div className="leaderboard-grid">
           <GlassPanel className="leaderboard-panel">
             <div className="leaderboard-toolbar">
               <div className="toolbar-pills">
-                <span className="toolbar-pill toolbar-pill-active">Global</span>
+                <span className="toolbar-pill toolbar-pill-active">{isGerman ? "Global" : "Global"}</span>
                 <span className="toolbar-pill">Live</span>
               </div>
               <span className="leaderboard-note">{leaderboardStatus}</span>
             </div>
 
-            <div className="leaderboard-table" role="table" aria-label="Reaction leaderboard">
+            <div
+              className="leaderboard-table"
+              role="table"
+              aria-label={isGerman ? "Reaction-Run-Leaderboard" : "Reaction leaderboard"}
+            >
               <div className="leaderboard-row leaderboard-row-header" role="row">
-                <span role="columnheader">Rank</span>
-                <span role="columnheader">Player</span>
-                <span role="columnheader">Region</span>
-                <span role="columnheader">Best</span>
-                <span role="columnheader">Form</span>
+                <span role="columnheader">{isGerman ? "Rang" : "Rank"}</span>
+                <span role="columnheader">{isGerman ? "Spieler" : "Player"}</span>
+                <span role="columnheader">{isGerman ? "Region" : "Region"}</span>
+                <span role="columnheader">{isGerman ? "Bestwert" : "Best"}</span>
+                <span role="columnheader">{isGerman ? "Status" : "Form"}</span>
               </div>
 
               {leaderboardRows.map((entry) => (
@@ -63,24 +74,42 @@ export function LeaderboardSection() {
           <div className="leaderboard-side">
             <GlassPanel className="leaderboard-side-panel">
               <span className="subtle-pill">
-                {provisionalRank ? `Current rank ${provisionalRank}` : "Ranking"}
+                {provisionalRank
+                  ? isGerman
+                    ? `Aktueller Rang ${provisionalRank}`
+                    : `Current rank ${provisionalRank}`
+                  : isGerman
+                    ? "Ranking"
+                    : "Ranking"}
               </span>
               <h3>
                 {provisionalRank
-                  ? `Your current best sits at ${provisionalRank}.`
-                  : "Run a valid test to enter the board."}
+                  ? isGerman
+                    ? `Dein aktueller Bestwert steht auf ${provisionalRank}.`
+                    : `Your current best sits at ${provisionalRank}.`
+                  : isGerman
+                    ? "Absolviere einen gueltigen Test, um ins Board zu kommen."
+                    : "Run a valid test to enter the board."}
               </h3>
               <p>
                 {provisionalRank
-                  ? "The board updates from your real test result, highlights your row, and keeps the comparison easy to scan."
-                  : "Start with the test above, then use Show leaderboard to place your result directly into the ranking flow."}
+                  ? isGerman
+                    ? "Das Board aktualisiert sich aus deinem echten Testergebnis, hebt deine Zeile hervor und bleibt leicht scanbar."
+                    : "The board updates from your real test result, highlights your row, and keeps the comparison easy to scan."
+                  : isGerman
+                    ? "Starte oben mit dem Test und nutze danach Leaderboard anzeigen, um dein Ergebnis direkt in den Ranking-Flow zu schicken."
+                    : "Start with the test above, then use Show leaderboard to place your result directly into the ranking flow."}
               </p>
             </GlassPanel>
 
             <AdSlot
-              label="Sponsored"
-              title="Leaderboard sponsor slot"
-              description="A premium-safe ad placement outside the core ranking table."
+              label={isGerman ? "Werbung" : "Sponsored"}
+              title={isGerman ? "Sponsor-Slot am Leaderboard" : "Leaderboard sponsor slot"}
+              description={
+                isGerman
+                  ? "Eine premium-taugliche Werbeplatzierung ausserhalb der eigentlichen Ranking-Tabelle."
+                  : "A premium-safe ad placement outside the core ranking table."
+              }
               slotId={adsensePrimarySlot}
             />
           </div>
