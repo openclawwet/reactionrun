@@ -1,6 +1,13 @@
 import { Button } from "../Button";
+import type { AppRoute } from "../../lib/appRoute";
 
-export function Header() {
+type HeaderProps = {
+  route: AppRoute;
+};
+
+export function Header({ route }: HeaderProps) {
+  const isLegalPage = route !== "home";
+
   return (
     <header className="site-header">
       <div className="container site-header-inner">
@@ -13,13 +20,24 @@ export function Header() {
         </a>
 
         <nav className="nav-links" aria-label="Primary">
-          <a href="#demo">Reaction Test</a>
-          <a href="#stats">Stats</a>
-          <a href="#leaderboard">Leaderboard</a>
+          {isLegalPage ? (
+            <>
+              <a href="#demo">Product</a>
+              <a href="#privacy">Datenschutz</a>
+              <a href="#imprint">Impressum</a>
+              <a href="#cookies">Cookies</a>
+            </>
+          ) : (
+            <>
+              <a href="#demo">Reaction Test</a>
+              <a href="#stats">Stats</a>
+              <a href="#leaderboard">Leaderboard</a>
+            </>
+          )}
         </nav>
 
         <Button href="#demo" className="header-cta">
-          Start reaction test
+          {isLegalPage ? "Open product" : "Start reaction test"}
         </Button>
       </div>
     </header>

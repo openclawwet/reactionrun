@@ -26,6 +26,9 @@ export function ConsentBanner() {
             <Button onClick={rejectAds} variant="secondary">
               Continue ad-free
             </Button>
+            <Button href="#cookies" variant="ghost">
+              Cookie settings
+            </Button>
           </div>
         </div>
       </div>

@@ -24,6 +24,7 @@ type MonetizationContextValue = {
   canAskForConsent: boolean;
   acceptAds: () => void;
   rejectAds: () => void;
+  resetConsent: () => void;
 };
 
 const CONSENT_KEY = "reaction-run-ad-consent-v1";
@@ -86,6 +87,7 @@ export function MonetizationProvider({ children }: { children: ReactNode }) {
       canAskForConsent,
       acceptAds: () => setConsent("accepted"),
       rejectAds: () => setConsent("rejected"),
+      resetConsent: () => setConsent("unknown"),
     }),
     [adsEnabled, adsLaunchState, adsMode, canAskForConsent, consent],
   );

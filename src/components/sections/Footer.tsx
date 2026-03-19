@@ -11,6 +11,9 @@ export function Footer() {
           <a href="#demo">Reaction Test</a>
           <a href="#stats">Stats</a>
           <a href="#leaderboard">Leaderboard</a>
+          <a href="#privacy">Datenschutz</a>
+          <a href="#imprint">Impressum</a>
+          <a href="#cookies">Cookies</a>
           <a href="mailto:team@reactionrun.com">Contact</a>
         </div>
       </div>

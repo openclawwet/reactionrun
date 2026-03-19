@@ -1,6 +1,8 @@
+import { AdSlot } from "./AdSlot";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "./Button";
 import { GlassPanel } from "./GlassPanel";
+import { adsenseTestSlot } from "../lib/ads";
 import { useReactionProduct } from "../state/ReactionProductContext";
 
 type DemoPhase = "idle" | "armed" | "ready" | "result" | "tooSoon";
@@ -55,9 +57,7 @@ export function ReactionDemo() {
     currentSessionAverageMs,
     bestReactionMs,
     averageReactionMs,
-    consistencyScore,
     provisionalRank,
-    hasRecordedRounds,
     guestProfile,
     publishMessage,
     publishStatus,
@@ -96,7 +96,6 @@ export function ReactionDemo() {
     null;
   const best = currentSessionBestMs ?? bestReactionMs;
   const average = currentSessionAverageMs ?? averageReactionMs;
-  const consistency = consistencyScore;
   const score = average === null ? null : Math.max(0, 420 - average);
   const rank = provisionalRank;
 
@@ -240,22 +239,13 @@ export function ReactionDemo() {
             </div>
           </GlassPanel>
 
-          <GlassPanel className="consistency-panel">
-            <div className="consistency-grid">
-              <div>
-                <span>Consistency</span>
-                <strong>{consistency === null ? "--" : `${consistency}%`}</strong>
-              </div>
-              <div>
-                <span>Save state</span>
-                <strong>{hasRecordedRounds ? "Local live" : "Ready"}</strong>
-              </div>
-            </div>
-            <p>
-              {copy.title} Run another round to improve your average, then send your
-              best result straight into the leaderboard.
-            </p>
-          </GlassPanel>
+          <AdSlot
+            label="Sponsored"
+            title="Test module sponsor slot"
+            description="A separated ad surface for the live test area, kept outside the core interaction panel."
+            slotId={adsenseTestSlot}
+            variant="compact"
+          />
         </div>
       </div>
     </GlassPanel>

@@ -10,6 +10,7 @@ export type AdsLaunchState =
   | "ready";
 
 export const adsenseClientId = import.meta.env.VITE_ADSENSE_CLIENT_ID?.trim() || "";
+export const adsenseTestSlot = import.meta.env.VITE_ADSENSE_SLOT_TEST?.trim() || "";
 export const adsensePrimarySlot = import.meta.env.VITE_ADSENSE_SLOT_PRIMARY?.trim() || "";
 export const adsenseSecondarySlot = import.meta.env.VITE_ADSENSE_SLOT_SECONDARY?.trim() || "";
 
