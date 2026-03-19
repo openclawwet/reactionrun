@@ -204,7 +204,8 @@ h3 {
 }
 
 .hero-section::before,
-.hero-section::after {
+.hero-section::after,
+.workspace-section::after {
   display: none;
 }
 
