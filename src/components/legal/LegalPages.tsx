@@ -188,8 +188,8 @@ export function PrivacyPage() {
         <LegalSection title={isGerman ? "5. Werbung mit Google AdSense" : "5. Advertising via Google AdSense"}>
           <p>
             {isGerman
-              ? "Reaction Run nutzt getrennte Werbeflaechen fuer Google AdSense. Werbe-Cookies oder vergleichbare Technologien werden erst nach einer ausdruecklichen Einwilligung geladen. Test, Statistik und Leaderboard bleiben optisch und funktional vom Werbebereich getrennt."
-              : "Reaction Run uses separated ad surfaces for Google AdSense. Advertising cookies or similar technologies are only loaded after explicit consent. The test, statistics, and leaderboard remain visually and functionally separated from the advertising areas."}
+              ? "Reaction Run nutzt getrennte Werbeflaechen fuer Google AdSense. Einwilligungen fuer den EWR, das Vereinigte Koenigreich und die Schweiz werden ueber Googles zertifizierte Consent-Management-Plattform im Produktkontext eingeholt. Test, Statistik und Leaderboard bleiben optisch und funktional vom Werbebereich getrennt."
+              : "Reaction Run uses separated ad surfaces for Google AdSense. Consent for the EEA, the UK, and Switzerland is collected through Google's certified consent management platform within the product experience. The test, statistics, and leaderboard remain visually and functionally separated from the advertising areas."}
           </p>
           <DefinitionList
             items={[
@@ -345,44 +345,54 @@ export function CookiesPage() {
   const { locale } = useLocale();
   const isGerman = locale === "de";
   const {
-    acceptAds,
-    adsEnabled,
     adsLaunchState,
-    canAskForConsent,
-    consent,
-    rejectAds,
-    resetConsent,
+    canManageConsent,
+    consentManagementUrl,
+    consentState,
+    openConsentSettings,
   } = useMonetization();
 
   const consentLabel =
-    consent === "accepted"
-      ? isGerman
-        ? "Werbung erlaubt"
-        : "Advertising allowed"
-      : consent === "rejected"
+    adsLaunchState === "ready"
+      ? consentState === "granted"
         ? isGerman
-          ? "Nur notwendige Speicherungen"
-          : "Necessary storage only"
-        : isGerman
-          ? "Noch keine Auswahl gespeichert"
-          : "No choice stored yet";
+          ? "Google CMP aktiv"
+          : "Google CMP active"
+        : consentState === "denied"
+          ? isGerman
+            ? "Einwilligung eingeschraenkt"
+            : "Consent limited"
+          : isGerman
+            ? "Google CMP bereit"
+            : "Google CMP ready"
+      : adsLaunchState === "cmp-required"
+        ? isGerman
+          ? "CMP noch ausstehend"
+          : "CMP still pending"
+        : adsLaunchState === "site-review-pending"
+          ? isGerman
+            ? "Site Review offen"
+            : "Site review pending"
+          : isGerman
+            ? "AdSense noch nicht konfiguriert"
+            : "AdSense not configured";
 
   const launchLabel =
     adsLaunchState === "ready"
       ? isGerman
-        ? "Optionales Werbe-Setup ist verfuegbar."
-        : "Optional advertising setup is available."
+        ? "Die Consent-Auswahl wird ueber Googles zertifizierte CMP auf der Produktseite verwaltet. Von dort aus kann die Auswahl jederzeit erneut geoeffnet werden."
+        : "Consent choices are managed through Google's certified CMP on the product page. From there, the selection can be reopened at any time."
       : adsLaunchState === "cmp-required"
         ? isGerman
-          ? "Vor Live-Werbung muss noch eine zertifizierte CMP angebunden werden."
-          : "A certified CMP still needs to be connected before live advertising can run."
-        : adsLaunchState === "site-review-pending"
-          ? isGerman
-            ? "Die Werbeeinbindung ist vorbereitet, aber die Website ist noch nicht fuer Live-Auslieferung freigegeben."
-            : "The advertising setup is prepared, but the site is not yet approved for live serving."
-          : isGerman
-            ? "Aktuell werden keine optionalen Werbe-Technologien geladen."
-            : "No optional advertising technologies are currently being loaded.";
+          ? "Die Google-CMP ist noch nicht als live markiert. Vor produktiver Auslieferung sollte das Privacy-&-Messaging-Setup in AdSense fertig veroeffentlicht sein."
+          : "The Google CMP is not marked live yet. Before production serving, the Privacy & Messaging setup in AdSense should be fully published."
+      : adsLaunchState === "site-review-pending"
+        ? isGerman
+          ? "Die CMP-Vorbereitung steht, aber die Website ist in AdSense noch nicht fuer Live-Auslieferung freigegeben."
+          : "The CMP setup is prepared, but the site is not yet approved in AdSense for live serving."
+        : isGerman
+          ? "Aktuell fehlt noch die volle AdSense-/CMP-Konfiguration fuer optionale Werbung."
+          : "The full AdSense / CMP configuration for optional advertising is not complete yet.";
 
   return (
     <LegalPageLayout
@@ -403,21 +413,21 @@ export function CookiesPage() {
           </div>
 
           <div className="legal-status-actions">
-            <Button onClick={rejectAds} variant="secondary" disabled={!canAskForConsent}>
-              {isGerman ? "Nur notwendige" : "Necessary only"}
+            <Button onClick={openConsentSettings} disabled={!canManageConsent}>
+              {isGerman ? "Consent auf Startseite oeffnen" : "Open consent on homepage"}
             </Button>
-            <Button onClick={acceptAds} disabled={!canAskForConsent}>
-              {isGerman ? "Werbung erlauben" : "Allow advertising"}
+            <Button href="/" variant="secondary">
+              {isGerman ? "Zur Produktseite" : "Back to product"}
             </Button>
-            <Button onClick={resetConsent} variant="ghost">
-              {isGerman ? "Auswahl zuruecksetzen" : "Reset choice"}
+            <Button href={consentManagementUrl} variant="ghost">
+              {isGerman ? "Direktlink zur Consent-Nachricht" : "Direct consent link"}
             </Button>
           </div>
 
           <p className="legal-status-note">
             {isGerman
-              ? "Bereits gesetzte Browser-Cookies oder lokale Speicherungen koennen zusaetzlich direkt ueber die Browsereinstellungen geloescht werden."
-              : "Cookies or local storage entries that were already set can additionally be deleted in the browser settings."}
+              ? "Diese Unterseite selbst bleibt werbefrei. Die eigentliche Consent-Nachricht wird auf der Produktseite in Googles Privacy-&-Messaging-Flow verwaltet. Bereits gesetzte Browser-Cookies oder lokale Speicherungen koennen zusaetzlich direkt ueber die Browsereinstellungen geloescht werden."
+              : "This legal page itself stays ad-free. The actual consent message is managed on the product page through Google's Privacy & Messaging flow. Cookies or local storage entries that were already set can additionally be deleted in the browser settings."}
           </p>
         </GlassPanel>
 
@@ -442,18 +452,18 @@ export function CookiesPage() {
                 <strong>{isGerman ? "Werbung" : "Advertising"}</strong>
                 <p>
                   {isGerman
-                    ? "Aktiviert getrennte AdSense-Werbeflaechen und die dafuer benoetigten Werbe- oder Fraud-Erkennungs-Technologien erst nach ausdruecklicher Einwilligung."
-                    : "Enables separated AdSense ad placements and the related advertising or fraud-detection technologies only after explicit consent."}
+                    ? "Aktiviert getrennte AdSense-Werbeflaechen und die dafuer benoetigten Werbe- oder Fraud-Erkennungs-Technologien. Die Auswahl wird ueber Googles zertifizierte CMP verwaltet."
+                    : "Enables separated AdSense placements and the related advertising or fraud-detection technologies. The choice is managed through Google's certified CMP."}
                 </p>
               </div>
               <span className="status-chip status-chip-soft">
-                {adsEnabled
+                {adsLaunchState === "ready"
                   ? isGerman
-                    ? "Aktiv"
-                    : "Active"
+                    ? "Google CMP"
+                    : "Google CMP"
                   : isGerman
-                    ? "Nur mit Einwilligung"
-                    : "Consent required"}
+                    ? "Setup offen"
+                    : "Setup pending"}
               </span>
             </div>
           </div>
@@ -463,14 +473,14 @@ export function CookiesPage() {
           <ul className="legal-list">
             {(isGerman
               ? [
-                  "Direkt auf dieser Seite ueber die Consent-Schaltflaechen",
-                  "Ueber den Cookie-Hinweis, solange noch keine Auswahl gespeichert wurde",
+                  "Ueber den Button auf dieser Seite, der zur Consent-Nachricht auf der Startseite fuehrt",
+                  "Direkt in Googles Privacy-&-Messaging-Dialog auf der Produktseite",
                   "Durch Loeschen der lokalen Website-Daten im Browser",
                   `Zusatzlich bei Google ueber ${adProviderProfile.adSettingsUrl}`,
                 ]
               : [
-                  "Directly on this page via the consent controls",
-                  "Via the cookie notice while no choice has been stored yet",
+                  "Through the button on this page that opens the consent message on the homepage",
+                  "Directly in Google's Privacy & Messaging dialog on the product page",
                   "By deleting local website data in the browser",
                   `Additionally via Google at ${adProviderProfile.adSettingsUrl}`,
                 ]

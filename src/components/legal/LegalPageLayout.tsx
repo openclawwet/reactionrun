@@ -39,7 +39,7 @@ export function LegalPageLayout({
             >
               {isGerman ? "Zur Startseite" : "Back to home"}
             </Button>
-            <Button href="#cookies" variant="secondary">
+            <Button href="/cookies" variant="secondary">
               {isGerman ? "Cookie-Einstellungen" : "Cookie settings"}
             </Button>
           </div>

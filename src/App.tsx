@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { ConsentBanner } from "./components/ConsentBanner";
 import { CookiesPage, ImprintPage, PrivacyPage } from "./components/legal/LegalPages";
 import { Footer } from "./components/sections/Footer";
 import { Header } from "./components/sections/Header";
@@ -83,7 +82,6 @@ function App() {
         )}
       </main>
       <Footer />
-      {route !== "cookies" ? <ConsentBanner /> : null}
     </div>
   );
 }

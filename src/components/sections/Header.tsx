@@ -38,9 +38,9 @@ export function Header({ route }: HeaderProps) {
           {isLegalPage ? (
             <>
               <a href="/" onClick={handleHomeNav("top")}>{isGerman ? "Produkt" : "Product"}</a>
-              <a href="#privacy">{isGerman ? "Datenschutz" : "Privacy"}</a>
-              <a href="#imprint">{isGerman ? "Impressum" : "Imprint"}</a>
-              <a href="#cookies">{isGerman ? "Cookies" : "Cookies"}</a>
+              <a href="/privacy">{isGerman ? "Datenschutz" : "Privacy"}</a>
+              <a href="/imprint">{isGerman ? "Impressum" : "Imprint"}</a>
+              <a href="/cookies">{isGerman ? "Cookies" : "Cookies"}</a>
             </>
           ) : (
             <>

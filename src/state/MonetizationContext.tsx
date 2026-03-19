@@ -3,6 +3,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -12,53 +13,143 @@ import {
   isAdSenseConfigured,
   type AdsLaunchState,
 } from "../lib/ads";
+import {
+  APP_ROUTE_EVENT,
+  getAppRouteFromLocation,
+  getConsentManagementUrl,
+  type AppRoute,
+} from "../lib/appRoute";
 
-type ConsentState = "unknown" | "accepted" | "rejected";
+type GoogleConsentState = "unknown" | "granted" | "denied";
+
+type GoogleFcConsentModeValues = {
+  adStoragePurposeConsentStatus?: number;
+  adUserDataPurposeConsentStatus?: number;
+  adPersonalizationPurposeConsentStatus?: number;
+  analyticsStoragePurposeConsentStatus?: number;
+};
+
+type GoogleFcWindow = {
+  callbackQueue?: Array<Record<string, () => void> | (() => void)>;
+  showRevocationMessage?: () => void;
+  getGoogleConsentModeValues?: () => GoogleFcConsentModeValues;
+  ConsentModePurposeStatusEnum?: {
+    UNKNOWN: number;
+    GRANTED: number;
+    DENIED: number;
+    NOT_APPLICABLE: number;
+    NOT_CONFIGURED: number;
+  };
+};
+
+declare global {
+  interface Window {
+    googlefc?: GoogleFcWindow;
+  }
+}
 
 type MonetizationContextValue = {
-  consent: ConsentState;
   adsMode: "preview" | "live";
   adsLaunchState: AdsLaunchState;
   adsEnabled: boolean;
-  hasConsentChoice: boolean;
-  canAskForConsent: boolean;
-  acceptAds: () => void;
-  rejectAds: () => void;
-  resetConsent: () => void;
+  consentState: GoogleConsentState;
+  googleCmpConfigured: boolean;
+  canManageConsent: boolean;
+  consentManagementUrl: string;
+  openConsentSettings: () => void;
 };
-
-const CONSENT_KEY = "reaction-run-ad-consent-v1";
 
 const MonetizationContext = createContext<MonetizationContextValue | null>(null);
 
-const readStoredConsent = (): ConsentState => {
+const getCurrentRoute = (): AppRoute => {
   if (typeof window === "undefined") {
+    return "home";
+  }
+
+  return getAppRouteFromLocation(window.location.pathname, window.location.hash);
+};
+
+const deriveConsentState = (values?: GoogleFcConsentModeValues): GoogleConsentState => {
+  if (!values) {
     return "unknown";
   }
 
-  const value = window.localStorage.getItem(CONSENT_KEY);
-  return value === "accepted" || value === "rejected" ? value : "unknown";
+  const relevantStatuses = [
+    values.adStoragePurposeConsentStatus,
+    values.adUserDataPurposeConsentStatus,
+    values.adPersonalizationPurposeConsentStatus,
+  ].filter((entry): entry is number => typeof entry === "number");
+
+  if (!relevantStatuses.length) {
+    return "unknown";
+  }
+
+  if (relevantStatuses.some((entry) => entry === 1)) {
+    return "granted";
+  }
+
+  if (relevantStatuses.every((entry) => entry === 2 || entry === 3 || entry === 4)) {
+    return "denied";
+  }
+
+  return "unknown";
 };
 
 export function MonetizationProvider({ children }: { children: ReactNode }) {
-  const [consent, setConsent] = useState<ConsentState>(readStoredConsent);
+  const [route, setRoute] = useState<AppRoute>(getCurrentRoute);
+  const [consentState, setConsentState] = useState<GoogleConsentState>("unknown");
+  const consentCallbackRegisteredRef = useRef(false);
+  const consentManagementUrl = getConsentManagementUrl();
 
   useEffect(() => {
-    if (consent === "unknown") {
-      window.localStorage.removeItem(CONSENT_KEY);
+    if (typeof window === "undefined") {
+      return undefined;
+    }
+
+    const handleRouteChange = () => {
+      setRoute(getCurrentRoute());
+    };
+
+    window.addEventListener("popstate", handleRouteChange);
+    window.addEventListener(APP_ROUTE_EVENT, handleRouteChange);
+
+    return () => {
+      window.removeEventListener("popstate", handleRouteChange);
+      window.removeEventListener(APP_ROUTE_EVENT, handleRouteChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || route !== "home" || !isAdSenseConfigured) {
       return;
     }
 
-    window.localStorage.setItem(CONSENT_KEY, consent);
-  }, [consent]);
+    window.googlefc = window.googlefc || {};
+    window.googlefc.callbackQueue = window.googlefc.callbackQueue || [];
 
-  const adsEnabled = consent === "accepted" && isAdSenseConfigured;
-  const adsMode = isAdSenseConfigured ? "live" : "preview";
-  const canAskForConsent = adsLaunchState === "ready";
+    if (!consentCallbackRegisteredRef.current) {
+      window.googlefc.callbackQueue.push({
+        CONSENT_MODE_DATA_READY: () => {
+          setConsentState(deriveConsentState(window.googlefc?.getGoogleConsentModeValues?.()));
+        },
+      });
+      consentCallbackRegisteredRef.current = true;
+    }
 
-  useEffect(() => {
-    if (!adsEnabled) {
-      return;
+    const searchParams = new URLSearchParams(window.location.search);
+    const shouldOpenConsentManager = searchParams.get("manage-consent") === "1";
+
+    if (shouldOpenConsentManager) {
+      window.googlefc.callbackQueue.push(() => {
+        const nextUrl = new URL(window.location.href);
+        nextUrl.searchParams.delete("manage-consent");
+        window.history.replaceState(
+          null,
+          "",
+          `${nextUrl.pathname}${nextUrl.search}${nextUrl.hash}`,
+        );
+        window.googlefc?.showRevocationMessage?.();
+      });
     }
 
     const existing = document.querySelector<HTMLScriptElement>(
@@ -75,21 +166,37 @@ export function MonetizationProvider({ children }: { children: ReactNode }) {
     script.crossOrigin = "anonymous";
     script.dataset.adsenseClient = adsenseClientId;
     document.head.appendChild(script);
-  }, [adsEnabled]);
+  }, [route]);
+
+  const openConsentSettings = () => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    if (route !== "home") {
+      window.location.assign(consentManagementUrl);
+      return;
+    }
+
+    window.googlefc = window.googlefc || {};
+    window.googlefc.callbackQueue = window.googlefc.callbackQueue || [];
+    window.googlefc.callbackQueue.push(() => {
+      window.googlefc?.showRevocationMessage?.();
+    });
+  };
 
   const value = useMemo<MonetizationContextValue>(
     () => ({
-      consent,
-      adsMode,
+      adsMode: isAdSenseConfigured ? "live" : "preview",
       adsLaunchState,
-      adsEnabled,
-      hasConsentChoice: consent !== "unknown",
-      canAskForConsent,
-      acceptAds: () => setConsent("accepted"),
-      rejectAds: () => setConsent("rejected"),
-      resetConsent: () => setConsent("unknown"),
+      adsEnabled: route === "home" && isAdSenseConfigured,
+      consentState,
+      googleCmpConfigured: adsLaunchState !== "cmp-required" && adsLaunchState !== "missing-client",
+      canManageConsent: adsLaunchState === "ready",
+      consentManagementUrl,
+      openConsentSettings,
     }),
-    [adsEnabled, adsLaunchState, adsMode, canAskForConsent, consent],
+    [consentManagementUrl, consentState, route],
   );
 
   return <MonetizationContext.Provider value={value}>{children}</MonetizationContext.Provider>;

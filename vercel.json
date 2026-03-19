@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/privacy",
+      "destination": "/"
+    },
+    {
+      "source": "/imprint",
+      "destination": "/"
+    },
+    {
+      "source": "/cookies",
+      "destination": "/"
+    }
+  ]
+}

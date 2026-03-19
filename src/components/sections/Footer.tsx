@@ -29,9 +29,9 @@ export function Footer() {
           <a href="/" onClick={handleHomeNav("demo")}>{isGerman ? "Reaktionstest" : "Reaction Test"}</a>
           <a href="/" onClick={handleHomeNav("stats")}>{isGerman ? "Statistiken" : "Stats"}</a>
           <a href="/" onClick={handleHomeNav("leaderboard")}>Leaderboard</a>
-          <a href="#privacy">{isGerman ? "Datenschutz" : "Privacy"}</a>
-          <a href="#imprint">{isGerman ? "Impressum" : "Imprint"}</a>
-          <a href="#cookies">Cookies</a>
+          <a href="/privacy">{isGerman ? "Datenschutz" : "Privacy"}</a>
+          <a href="/imprint">{isGerman ? "Impressum" : "Imprint"}</a>
+          <a href="/cookies">Cookies</a>
           <a href={`mailto:${siteLegalProfile.contactEmail}`}>{isGerman ? "Kontakt" : "Contact"}</a>
         </div>
       </div>

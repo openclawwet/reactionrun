@@ -25,7 +25,7 @@ export function AdSlot({
   variant = "feature",
 }: AdSlotProps) {
   const { locale } = useLocale();
-  const { adsEnabled, adsLaunchState, consent } = useMonetization();
+  const { adsEnabled, adsLaunchState, consentState } = useMonetization();
   const slotRef = useRef<HTMLModElement | null>(null);
   const elementId = useId();
   const hasValidSlot = isAdSenseSlotConfigured(slotId);
@@ -51,61 +51,61 @@ export function AdSlot({
   }, [adsEnabled, hasValidSlot]);
 
   const previewCopy =
-    consent === "rejected"
+    adsLaunchState === "missing-client"
       ? isGerman
-        ? "Werbung ist deaktiviert, weil der Besucher die getrennten Sponsor-Flaechen abgelehnt hat."
-        : "Ads are disabled because the visitor declined the separated sponsor surfaces."
-      : adsLaunchState === "missing-client"
+        ? "Vorschau-Slot aktiv. Hinterlege eine echte AdSense-Client-ID, um diese Flaeche fuer den Launch vorzubereiten."
+        : "Preview slot active. Add a real AdSense client id to prepare this placement for launch."
+      : adsLaunchState === "site-review-pending"
         ? isGerman
-          ? "Vorschau-Slot aktiv. Hinterlege eine echte AdSense-Client-ID, um diese Flaeche fuer den Launch vorzubereiten."
-          : "Preview slot active. Add a real AdSense client id to prepare this placement for launch."
-        : adsLaunchState === "site-review-pending"
+          ? "Die AdSense-Client-ID ist vorhanden, aber Live-Auslieferung bleibt gesperrt, bis die Website freigegeben ist."
+          : "The AdSense client is present, but live serving stays blocked until the site is approved and marked ready."
+        : adsLaunchState === "cmp-required"
           ? isGerman
-            ? "Die AdSense-Client-ID ist vorhanden, aber Live-Auslieferung bleibt gesperrt, bis die Website freigegeben ist."
-            : "The AdSense client is present, but live serving stays blocked until the site is approved and marked ready."
-          : adsLaunchState === "cmp-required"
+            ? "Aktiviere zuerst Googles zertifizierte CMP, bevor AdSense auf dieser Flaeche live gehen kann."
+            : "Enable Google's certified CMP before AdSense can go live on this placement."
+          : !hasValidSlot
             ? isGerman
-              ? "Binde zuerst eine zertifizierte CMP an, bevor AdSense auf dieser Flaeche aktiviert wird."
-              : "Connect your certified CMP before enabling AdSense on this placement."
-            : !hasValidSlot
+              ? "AdSense kann starten, aber diese Flaeche benoetigt noch ihre eigene numerische Slot-ID."
+              : "AdSense can boot, but this surface still needs its own numeric slot id."
+            : consentState === "granted"
               ? isGerman
-                ? "AdSense kann starten, aber diese Flaeche benoetigt noch ihre eigene numerische Slot-ID."
-                : "AdSense can boot, but this surface still needs its own numeric slot id."
-              : consent === "accepted"
+                ? "Google CMP ist aktiv. Dieser Slot rendert ueber das veroefentlichte AdSense-Setup."
+                : "Google CMP is active. This slot renders through the published AdSense setup."
+              : consentState === "denied"
                 ? isGerman
-                  ? "AdSense ist konfiguriert. Dieser Slot rendert hier, sobald die Seite fertig geladen ist."
-                  : "AdSense is configured. This slot will render here once the page finishes loading."
+                  ? "Google CMP ist aktiv. Diese Flaeche wird gemaess der getroffenen Auswahl eingeschraenkt oder ohne Personalisierung ausgeliefert."
+                  : "Google CMP is active. This surface is limited or served without personalization according to the visitor's choice."
                 : isGerman
-                  ? "Diese Sponsor-Flaeche bleibt inaktiv, bis der Besucher Werbung ausdruecklich erlaubt."
-                  : "This sponsor surface stays inactive until the visitor explicitly allows ads.";
+                  ? "Google CMP verwaltet diese Flaeche. Der Slot wird aktiv, sobald die Consent-Nachricht und AdSense-Bereitstellung abgeschlossen sind."
+                  : "Google CMP manages this surface. The slot becomes active once the consent message and AdSense serving flow complete.";
 
   const statusLabel = adsEnabled && hasValidSlot
-    ? isGerman
-      ? "AdSense live"
-      : "AdSense live"
-    : consent === "rejected"
+    ? consentState === "granted"
       ? isGerman
-        ? "Werbung aus"
-        : "Ads off"
-      : adsLaunchState === "missing-client"
+        ? "AdSense live"
+        : "AdSense live"
+      : consentState === "denied"
         ? isGerman
-          ? "Vorschau"
-          : "Preview"
+          ? "CMP aktiv"
+          : "CMP active"
+        : isGerman
+          ? "Google CMP"
+          : "Google CMP"
+    : adsLaunchState === "missing-client"
+      ? isGerman
+        ? "Vorschau"
+        : "Preview"
       : adsLaunchState === "site-review-pending"
         ? isGerman
           ? "Pruefung offen"
           : "Approval pending"
-        : adsLaunchState === "cmp-required"
-          ? isGerman
-            ? "CMP noetig"
-            : "CMP required"
-          : hasValidSlot
-            ? isGerman
-              ? "Einwilligung offen"
-              : "Consent pending"
-            : isGerman
-              ? "Slot fehlt"
-              : "Slot missing";
+      : adsLaunchState === "cmp-required"
+        ? isGerman
+          ? "CMP noetig"
+          : "CMP required"
+        : isGerman
+          ? "Slot fehlt"
+          : "Slot missing";
 
   return (
     <div className={`ad-slot ad-slot-${variant}`}>
