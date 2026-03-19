@@ -4,9 +4,11 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "supabase:validate-env": "node scripts/validate-supabase-env.mjs",
     "ads:prepare": "node scripts/prepare-adsense-assets.mjs",
+    "predev": "node scripts/validate-supabase-env.mjs",
     "dev": "vite",
-    "prebuild": "node scripts/prepare-adsense-assets.mjs",
+    "prebuild": "node scripts/validate-supabase-env.mjs && node scripts/prepare-adsense-assets.mjs",
     "build": "tsc -b && vite build",
     "preview": "vite preview"
   },

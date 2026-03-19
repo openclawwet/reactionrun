@@ -1167,6 +1167,7 @@ h3 {
 
 .reaction-surface {
   width: 100%;
+  position: relative;
   padding: 30px;
   min-height: 270px;
   border-radius: 32px;
@@ -1222,6 +1223,34 @@ h3 {
   max-width: 420px;
   color: var(--muted);
   line-height: 1.8;
+}
+
+.reaction-surface-result-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  width: min(calc(100% - 48px), 460px);
+  padding: 12px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(244, 243, 239, 0.72));
+  box-shadow:
+    0 14px 28px rgba(17, 17, 17, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  color: var(--copy);
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.55;
+  letter-spacing: -0.02em;
+}
+
+:root[data-theme="dark"] .reaction-surface-result-hint {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(23, 29, 34, 0.94), rgba(15, 20, 25, 0.82));
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .reaction-surface-caption {
@@ -3152,6 +3181,15 @@ h3 {
     border-radius: 24px;
   }
 
+  .reaction-surface-result-hint {
+    bottom: 18px;
+    width: calc(100% - 32px);
+    padding: 10px 12px;
+    border-radius: 16px;
+    font-size: 0.82rem;
+    line-height: 1.46;
+  }
+
   .reaction-surface p {
     max-width: 17ch;
   }
@@ -3282,6 +3320,12 @@ h3 {
     padding: 16px;
     min-height: min(46svh, 300px);
     border-radius: 28px;
+  }
+
+  .reaction-surface-result-hint {
+    bottom: 16px;
+    width: calc(100% - 26px);
+    font-size: 0.78rem;
   }
 
   .reaction-surface strong {

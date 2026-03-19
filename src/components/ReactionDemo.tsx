@@ -137,6 +137,22 @@ export function ReactionDemo() {
   };
 
   const copy = getPhaseCopy(isGerman)[phase];
+  const resultHint =
+    publishStatus === "success"
+      ? isGerman
+        ? "Score live. Oeffne das Leaderboard, um dein Ranking zu sehen."
+        : "Score is live. Open the leaderboard to see your rank."
+      : publishStatus === "submitting"
+        ? isGerman
+          ? "Score wird ins Leaderboard uebertragen..."
+          : "Score is being published to the leaderboard..."
+        : publishStatus === "error"
+          ? isGerman
+            ? "Score gemessen. Nutze Leaderboard anzeigen, um den Eintrag erneut zu versuchen."
+            : "Score captured. Use Show leaderboard to try the entry again."
+          : isGerman
+            ? "Klicke auf Leaderboard anzeigen, um deinen Score einzutragen und dein Ranking zu sehen."
+            : "Click Show leaderboard to publish your score and see your rank.";
 
   return (
     <div className="reaction-demo" id="demo">
@@ -168,6 +184,9 @@ export function ReactionDemo() {
                   : "Wait"}
           </strong>
           <p>{copy.body}</p>
+          {phase === "result" ? (
+            <span className="reaction-surface-result-hint">{resultHint}</span>
+          ) : null}
         </button>
 
         <div className="reaction-demo-side">
