@@ -269,11 +269,11 @@ export function ReactionDemo() {
 
           <AdSlot
             label={isGerman ? "Werbung" : "Sponsored"}
-            title={isGerman ? "Sponsor-Slot im Testmodul" : "Test module sponsor slot"}
+            title={isGerman ? "Premium Sponsor-Slot im Testmodul" : "Premium sponsor slot in the test module"}
             description={
               isGerman
-                ? "Eine getrennte Werbeflaeche fuer den Live-Testbereich, bewusst ausserhalb der Kerninteraktion."
-                : "A separated ad surface for the live test area, kept outside the core interaction panel."
+                ? "Diese Flaeche ist fuer passende Partner direkt im ersten Screen reserviert, bleibt aber klar vom eigentlichen Reaktionstest getrennt. Ideal fuer Hardware, Performance-Tools oder Gaming-Equipment, ohne den Testfluss zu stoeren."
+                : "This surface is reserved for relevant partners directly in the first screen while staying clearly separated from the actual reaction test. Ideal for hardware, performance tools, or gaming gear without interrupting the test flow."
             }
             slotId={adsenseTestSlot}
             variant="compact"

@@ -1839,34 +1839,128 @@ h3 {
 }
 
 @media (min-width: 1180px) {
+  .section.hero-section {
+    min-height: calc(100svh - 98px);
+    padding: 28px 0 30px;
+  }
+
+  .hero-shell {
+    min-height: calc(100svh - 156px);
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .hero-copy {
+    gap: 18px;
+  }
+
+  .hero-copy p {
+    max-width: 780px;
+    font-size: 1rem;
+    line-height: 1.74;
+  }
+
+  .hero-demo-wrap {
+    display: flex;
+    min-height: 0;
+  }
+
+  .hero-demo-wrap .reaction-demo {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    height: 100%;
+  }
+
   .section {
     padding: 78px 0;
   }
 
   .reaction-demo {
-    padding: 34px;
+    padding: 28px;
   }
 
   .reaction-demo-stage {
-    grid-template-columns: minmax(0, 1.34fr) minmax(360px, 0.66fr);
+    height: 100%;
+    margin-top: 18px;
+    gap: 14px;
+    grid-template-columns: minmax(0, 1.38fr) minmax(420px, 0.62fr);
     align-items: stretch;
   }
 
   .reaction-demo-side {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
     align-content: start;
+  }
+
+  .reaction-demo-actions,
+  .reaction-entry-bar,
+  .reaction-entry-feedback,
+  .reaction-metric-grid {
+    grid-column: 1 / -1;
+  }
+
+  .reaction-demo-actions {
+    gap: 10px;
+  }
+
+  .reaction-demo-actions .button-secondary,
+  .reaction-demo-actions .button-ghost {
+    flex: 1 1 calc(50% - 5px);
+  }
+
+  .reaction-entry-bar {
+    gap: 10px;
   }
 
   .reaction-demo-side .reaction-metric-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .reaction-demo-side .ad-slot,
+  .reaction-session-panel {
+    padding: 16px;
+    height: 100%;
+  }
+
+  .reaction-demo-side .ad-slot {
+    display: grid;
+    align-content: start;
+  }
+
+  .reaction-demo-side .ad-slot-copy p {
+    max-width: 40ch;
+    line-height: 1.66;
+  }
+
   .reaction-surface {
-    min-height: 470px;
-    padding: 44px;
+    min-height: 0;
+    height: 100%;
+    padding: 36px;
   }
 
   .reaction-surface strong {
-    font-size: clamp(4.6rem, 6vw, 7rem);
+    font-size: clamp(4.2rem, 5.8vw, 6.5rem);
+  }
+
+  .reaction-surface p {
+    max-width: 360px;
+    line-height: 1.68;
+  }
+
+  .metric-card,
+  .stats-card {
+    padding: 16px;
+  }
+
+  .metric-card strong {
+    margin-top: 6px;
+    font-size: 1.16rem;
+  }
+
+  .reaction-demo-side .ad-slot-frame {
+    min-height: 176px;
+    margin-top: 14px;
   }
 
   .stats-metrics {
@@ -1885,12 +1979,20 @@ h3 {
 }
 
 @media (min-width: 1440px) {
+  .section.hero-section {
+    padding: 30px 0 34px;
+  }
+
+  .hero-shell {
+    min-height: calc(100svh - 164px);
+  }
+
   .section {
     padding: 84px 0;
   }
 
   .reaction-demo-stage {
-    grid-template-columns: minmax(0, 1.42fr) minmax(420px, 0.58fr);
+    grid-template-columns: minmax(0, 1.46fr) minmax(440px, 0.54fr);
   }
 
   .value-grid {
