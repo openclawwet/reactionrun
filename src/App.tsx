@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { CookieConsentBanner } from "./components/CookieConsentBanner";
 import { CookiesPage, ImprintPage, PrivacyPage } from "./components/legal/LegalPages";
 import { Footer } from "./components/sections/Footer";
 import { Header } from "./components/sections/Header";
@@ -81,6 +82,7 @@ function App() {
           </>
         )}
       </main>
+      <CookieConsentBanner />
       <Footer />
     </div>
   );

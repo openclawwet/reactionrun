@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Button } from "../Button";
+import { CookiePreferenceCenter } from "../CookiePreferenceCenter";
 import { GlassPanel } from "../GlassPanel";
 import {
   adProviderProfile,
@@ -430,6 +431,10 @@ export function CookiesPage() {
               : "This legal page itself stays ad-free. The actual consent message is managed on the product page through Google's Privacy & Messaging flow. Cookies or local storage entries that were already set can additionally be deleted in the browser settings."}
           </p>
         </GlassPanel>
+
+        <LegalSection title={isGerman ? "Einstellungen" : "Settings"}>
+          <CookiePreferenceCenter context="page" />
+        </LegalSection>
 
         <LegalSection title={isGerman ? "Verwendete Kategorien" : "Categories in use"}>
           <div className="cookie-category-list">
