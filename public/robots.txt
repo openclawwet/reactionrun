@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
+Host: reactionrun.com
 Sitemap: https://reactionrun.com/sitemap.xml

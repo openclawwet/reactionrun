@@ -2,14 +2,8 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://reactionrun.com/</loc>
-  </url>
-  <url>
-    <loc>https://reactionrun.com/privacy</loc>
-  </url>
-  <url>
-    <loc>https://reactionrun.com/imprint</loc>
-  </url>
-  <url>
-    <loc>https://reactionrun.com/cookies</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
   </url>
 </urlset>
