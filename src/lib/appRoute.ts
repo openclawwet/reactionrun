@@ -1,12 +1,20 @@
 import { useEffect, useState } from "react";
 
-export type AppRoute = "home" | "privacy" | "imprint" | "cookies";
+export type AppRoute =
+  | "home"
+  | "privacy"
+  | "imprint"
+  | "cookies"
+  | "good-reaction-time"
+  | "mobile-vs-desktop";
 export type HomeSection = "top" | "demo" | "stats" | "leaderboard";
 
-const LEGAL_ROUTE_PATHS: Record<Exclude<AppRoute, "home">, string> = {
+const APP_ROUTE_PATHS: Record<Exclude<AppRoute, "home">, string> = {
   privacy: "/privacy",
   imprint: "/imprint",
   cookies: "/cookies",
+  "good-reaction-time": "/good-reaction-time",
+  "mobile-vs-desktop": "/mobile-vs-desktop-reaction-time",
 };
 
 const HOME_SECTION_SET = new Set<HomeSection>(["top", "demo", "stats", "leaderboard"]);
@@ -38,27 +46,36 @@ export const getHomeSectionFromHash = (hash: string): HomeSection | null => {
 export const getAppRouteFromLocation = (pathname: string, hash = ""): AppRoute => {
   const normalizedPath = normalizePathname(pathname);
 
-  if (normalizedPath === LEGAL_ROUTE_PATHS.privacy) {
+  if (normalizedPath === APP_ROUTE_PATHS.privacy) {
     return "privacy";
   }
 
-  if (normalizedPath === LEGAL_ROUTE_PATHS.imprint) {
+  if (normalizedPath === APP_ROUTE_PATHS.imprint) {
     return "imprint";
   }
 
-  if (normalizedPath === LEGAL_ROUTE_PATHS.cookies) {
+  if (normalizedPath === APP_ROUTE_PATHS.cookies) {
     return "cookies";
+  }
+
+  if (normalizedPath === APP_ROUTE_PATHS["good-reaction-time"]) {
+    return "good-reaction-time";
+  }
+
+  if (normalizedPath === APP_ROUTE_PATHS["mobile-vs-desktop"]) {
+    return "mobile-vs-desktop";
   }
 
   return getLegacyRouteFromHash(hash);
 };
 
 export const getRoutePath = (route: AppRoute) =>
-  route === "home" ? "/" : LEGAL_ROUTE_PATHS[route];
+  route === "home" ? "/" : APP_ROUTE_PATHS[route];
 
 export const getConsentManagementUrl = () => "/?manage-consent=1";
 
-export const isLegalRoute = (route: AppRoute) => route !== "home";
+export const isLegalRoute = (route: AppRoute) =>
+  route === "privacy" || route === "imprint" || route === "cookies";
 
 const emitRouteChange = () => {
   if (typeof window === "undefined") {

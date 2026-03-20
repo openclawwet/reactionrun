@@ -1,5 +1,6 @@
 import { GlassPanel } from "../GlassPanel";
 import { SectionHeader } from "../SectionHeader";
+import { Button } from "../Button";
 import { useLocale } from "../../state/LocaleContext";
 
 const methodHighlights = {
@@ -83,6 +84,42 @@ export function MethodSection() {
               </GlassPanel>
             ))}
           </div>
+        </div>
+
+        <div className="guide-link-grid">
+          <GlassPanel className="guide-link-card">
+            <span className="subtle-pill">{isGerman ? "Guide" : "Guide"}</span>
+            <strong>
+              {isGerman
+                ? "Was ist eine gute Reaktionszeit?"
+                : "What is a good reaction time?"}
+            </strong>
+            <p>
+              {isGerman
+                ? "Ein kompakter Guide zu guten Werten, Durchschnitt, Konstanz und fairen Browser-Vergleichen."
+                : "A focused guide to strong scores, averages, consistency, and fair browser-based comparison."}
+            </p>
+            <Button href="/good-reaction-time" variant="secondary">
+              {isGerman ? "Guide lesen" : "Read guide"}
+            </Button>
+          </GlassPanel>
+
+          <GlassPanel className="guide-link-card">
+            <span className="subtle-pill">{isGerman ? "Guide" : "Guide"}</span>
+            <strong>
+              {isGerman
+                ? "Mobile vs. Desktop Reaktionszeit"
+                : "Mobile vs. desktop reaction time"}
+            </strong>
+            <p>
+              {isGerman
+                ? "Warum sich Touch und Maus anders anfuehlen und wie man Scores geraeteuebergreifend fair liest."
+                : "Why touch and mouse feel different, and how to read scores fairly across devices."}
+            </p>
+            <Button href="/mobile-vs-desktop-reaction-time" variant="secondary">
+              {isGerman ? "Guide lesen" : "Read guide"}
+            </Button>
+          </GlassPanel>
         </div>
       </div>
     </section>

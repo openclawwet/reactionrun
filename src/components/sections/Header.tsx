@@ -1,6 +1,6 @@
 import { useEffect, useState, type MouseEvent } from "react";
 import { Button } from "../Button";
-import { goToHomeSection, type AppRoute } from "../../lib/appRoute";
+import { goToHomeSection, isLegalRoute, type AppRoute } from "../../lib/appRoute";
 import { useLocale } from "../../state/LocaleContext";
 import { useTheme } from "../../state/ThemeContext";
 
@@ -9,7 +9,7 @@ type HeaderProps = {
 };
 
 export function Header({ route }: HeaderProps) {
-  const isLegalPage = route !== "home";
+  const isLegalPage = isLegalRoute(route);
   const { locale, setLocale } = useLocale();
   const { isDark, toggleTheme } = useTheme();
   const isGerman = locale === "de";

@@ -29,6 +29,8 @@ export function Footer() {
           <a href="/" onClick={handleHomeNav("demo")}>{isGerman ? "Reaktionstest" : "Reaction Test"}</a>
           <a href="/" onClick={handleHomeNav("stats")}>{isGerman ? "Statistiken" : "Stats"}</a>
           <a href="/" onClick={handleHomeNav("leaderboard")}>Leaderboard</a>
+          <a href="/good-reaction-time">{isGerman ? "Gute Reaktionszeit" : "Good reaction time"}</a>
+          <a href="/mobile-vs-desktop-reaction-time">{isGerman ? "Mobile vs. Desktop" : "Mobile vs. desktop"}</a>
           <a href="/privacy">{isGerman ? "Datenschutz" : "Privacy"}</a>
           <a href="/imprint">{isGerman ? "Impressum" : "Imprint"}</a>
           <a href="/cookies">Cookies</a>

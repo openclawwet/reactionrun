@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { CookieConsentBanner } from "./components/CookieConsentBanner";
+import { GoodReactionTimePage, MobileVsDesktopPage } from "./components/content/GuidePages";
 import { CookiesPage, ImprintPage, PrivacyPage } from "./components/legal/LegalPages";
 import { FaqSection } from "./components/sections/FaqSection";
 import { Footer } from "./components/sections/Footer";
@@ -63,41 +64,61 @@ function App() {
   const legalPage = isLegalRoute(route);
   const { locale } = useLocale();
   const isGerman = locale === "de";
+  const isGuidePage = route === "good-reaction-time" || route === "mobile-vs-desktop";
 
   useEffect(() => {
-    const title =
+    const routeMeta =
       route === "privacy"
-        ? isGerman
-          ? "Datenschutz | Reaction Run"
-          : "Privacy Policy | Reaction Run"
+        ? {
+            title: isGerman ? "Datenschutz | Reaction Run" : "Privacy Policy | Reaction Run",
+            description: isGerman
+              ? "Datenschutzhinweise fuer Reaction Run mit Informationen zu lokalem Speicher, Leaderboard, Werbung und Kontakt."
+              : "Privacy policy for Reaction Run with details about local storage, leaderboard submissions, advertising, and contact.",
+          }
         : route === "imprint"
-          ? isGerman
-            ? "Impressum | Reaction Run"
-            : "Imprint | Reaction Run"
+          ? {
+              title: isGerman ? "Impressum | Reaction Run" : "Imprint | Reaction Run",
+              description: isGerman
+                ? "Impressum und Anbieterkennzeichnung fuer Reaction Run."
+                : "Imprint and provider information for Reaction Run.",
+            }
           : route === "cookies"
-            ? isGerman
-              ? "Cookie-Einstellungen | Reaction Run"
-              : "Cookie Settings | Reaction Run"
-            : isGerman
-              ? "Reaction Run | Praeziser Reaktionstest"
-              : "Reaction Run | Precision Reaction Testing";
+            ? {
+                title: isGerman
+                  ? "Cookie-Einstellungen | Reaction Run"
+                  : "Cookie Settings | Reaction Run",
+                description: isGerman
+                  ? "Cookie-Einstellungen und Informationen zu erforderlichen Speicherungen und optionaler Werbung auf Reaction Run."
+                  : "Cookie settings and information about necessary storage and optional advertising on Reaction Run.",
+              }
+            : route === "good-reaction-time"
+              ? {
+                  title: isGerman
+                    ? "Was ist eine gute Reaktionszeit? | Reaction Run"
+                    : "What is a good reaction time? | Reaction Run",
+                  description: isGerman
+                    ? "Ein kompakter Guide zu guten Reaktionszeit-Werten, validen Runs, Durchschnitt, Kontext und fairen Vergleichen im Browser."
+                    : "A focused guide to good reaction-time scores, valid runs, averages, context, and fair browser-based comparison.",
+                }
+              : route === "mobile-vs-desktop"
+                ? {
+                    title: isGerman
+                      ? "Mobile vs. Desktop Reaktionszeit | Reaction Run"
+                      : "Mobile vs. Desktop Reaction Time | Reaction Run",
+                    description: isGerman
+                      ? "Warum sich Reaktionszeiten auf Handy und Desktop unterscheiden und wie man Scores geraeteuebergreifend fair einordnet."
+                      : "Why reaction time differs between phone and desktop, and how to interpret scores fairly across devices.",
+                  }
+                : {
+                    title: isGerman
+                      ? "Reaction Run | Praeziser Reaktionstest"
+                      : "Reaction Run | Precision Reaction Testing",
+                    description: isGerman
+                      ? "Reaction Run ist eine hochwertige Plattform zum Testen der Reaktionszeit, zum Verfolgen von Statistiken und zum Vergleichen im Leaderboard."
+                      : "Reaction Run is a premium reaction time platform for testing speed, tracking progress, and comparing performance.",
+                  };
 
-    const description =
-      route === "privacy"
-        ? isGerman
-          ? "Datenschutzhinweise fuer Reaction Run mit Informationen zu lokalem Speicher, Leaderboard, Werbung und Kontakt."
-          : "Privacy policy for Reaction Run with details about local storage, leaderboard submissions, advertising, and contact."
-        : route === "imprint"
-          ? isGerman
-            ? "Impressum und Anbieterkennzeichnung fuer Reaction Run."
-            : "Imprint and provider information for Reaction Run."
-          : route === "cookies"
-            ? isGerman
-              ? "Cookie-Einstellungen und Informationen zu erforderlichen Speicherungen und optionaler Werbung auf Reaction Run."
-              : "Cookie settings and information about necessary storage and optional advertising on Reaction Run."
-            : isGerman
-              ? "Reaction Run ist eine hochwertige Plattform zum Testen der Reaktionszeit, zum Verfolgen von Statistiken und zum Vergleichen im Leaderboard."
-              : "Reaction Run is a premium reaction time platform for testing speed, tracking progress, and comparing performance.";
+    const { title, description } = routeMeta;
 
     const canonicalPath = getRoutePath(route);
     const canonicalUrl = `${SITE_URL}${canonicalPath}`;
@@ -127,17 +148,31 @@ function App() {
           },
           {
             "@context": "https://schema.org",
-            "@type": "SoftwareApplication",
+            "@type": isGuidePage ? "Article" : "SoftwareApplication",
             name: "Reaction Run",
-            applicationCategory: "GameApplication",
-            operatingSystem: "Web",
             url: canonicalUrl,
             description,
-            offers: {
-              "@type": "Offer",
-              price: "0",
-              priceCurrency: "EUR",
-            },
+            ...(isGuidePage
+              ? {
+                  headline: title,
+                  author: {
+                    "@type": "Organization",
+                    name: "Reaction Run",
+                  },
+                  publisher: {
+                    "@type": "Organization",
+                    name: "Reaction Run",
+                  },
+                }
+              : {
+                  applicationCategory: "GameApplication",
+                  operatingSystem: "Web",
+                  offers: {
+                    "@type": "Offer",
+                    price: "0",
+                    priceCurrency: "EUR",
+                  },
+                }),
           },
         ];
 
@@ -187,7 +222,7 @@ function App() {
     if (legalPage) {
       window.scrollTo({ top: 0, behavior: "auto" });
     }
-  }, [isGerman, legalPage, route]);
+  }, [isGerman, isGuidePage, legalPage, route]);
 
   return (
     <div className="page-shell">
@@ -200,6 +235,10 @@ function App() {
           <ImprintPage />
         ) : route === "cookies" ? (
           <CookiesPage />
+        ) : route === "good-reaction-time" ? (
+          <GoodReactionTimePage />
+        ) : route === "mobile-vs-desktop" ? (
+          <MobileVsDesktopPage />
         ) : (
           <>
             <HeroSection />

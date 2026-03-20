@@ -11,6 +11,14 @@
     {
       "source": "/cookies",
       "destination": "/"
+    },
+    {
+      "source": "/good-reaction-time",
+      "destination": "/"
+    },
+    {
+      "source": "/mobile-vs-desktop-reaction-time",
+      "destination": "/"
     }
   ]
 }
