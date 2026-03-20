@@ -2193,19 +2193,6 @@ h3 {
   border-radius: 0;
 }
 
-.leaderboard-table .leaderboard-row:not(.leaderboard-row-header) {
-  transition: background-color 180ms ease, transform 180ms ease;
-}
-
-.leaderboard-table .leaderboard-row:not(.leaderboard-row-header):hover {
-  background: rgba(255, 255, 255, 0.56);
-  transform: translateX(2px);
-}
-
-:root[data-theme="dark"] .leaderboard-table .leaderboard-row:not(.leaderboard-row-header):hover {
-  background: rgba(255, 255, 255, 0.04);
-}
-
 .leaderboard-table .leaderboard-row:nth-child(2) {
   background:
     linear-gradient(90deg, rgba(109, 142, 157, 0.09), rgba(255, 255, 255, 0.2)),
@@ -2283,6 +2270,54 @@ h3 {
 .leaderboard-note-card {
   border-radius: 22px;
   transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.method-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.method-article,
+.method-point-card,
+.faq-card {
+  padding: 26px;
+  border-radius: 28px;
+}
+
+.method-article {
+  display: grid;
+  gap: 16px;
+}
+
+.method-article h3 {
+  font-size: clamp(1.55rem, 3vw, 2.2rem);
+  line-height: 1.02;
+  letter-spacing: -0.05em;
+}
+
+.method-article p,
+.method-point-card p,
+.faq-card p {
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.method-points,
+.faq-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.method-point-card,
+.faq-card {
+  display: grid;
+  gap: 12px;
+}
+
+.method-point-card strong,
+.faq-card strong {
+  font-size: 1.08rem;
+  letter-spacing: -0.03em;
 }
 
 .stats-metrics {
@@ -2958,6 +2993,14 @@ h3 {
 
   .leaderboard-grid {
     grid-template-columns: minmax(0, 1.24fr) minmax(380px, 0.76fr);
+  }
+
+  .method-grid {
+    grid-template-columns: minmax(0, 1.16fr) minmax(360px, 0.84fr);
+  }
+
+  .faq-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .platform-grid {

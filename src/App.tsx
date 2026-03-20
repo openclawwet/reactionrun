@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import { CookieConsentBanner } from "./components/CookieConsentBanner";
 import { CookiesPage, ImprintPage, PrivacyPage } from "./components/legal/LegalPages";
+import { FaqSection } from "./components/sections/FaqSection";
 import { Footer } from "./components/sections/Footer";
 import { Header } from "./components/sections/Header";
 import { HeroSection } from "./components/sections/HeroSection";
 import { LeaderboardSection } from "./components/sections/LeaderboardSection";
+import { MethodSection } from "./components/sections/MethodSection";
 import { WorkspaceSection } from "./components/sections/WorkspaceSection";
 import { getRoutePath, isLegalRoute, useAppRoute } from "./lib/appRoute";
 import { useLocale } from "./state/LocaleContext";
@@ -203,6 +205,8 @@ function App() {
             <HeroSection />
             <WorkspaceSection />
             <LeaderboardSection />
+            <MethodSection />
+            <FaqSection />
           </>
         )}
       </main>
