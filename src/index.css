@@ -821,16 +821,18 @@ h3 {
 }
 
 .hero-emphasis {
+  color: var(--copy);
+}
+
+:root[data-theme="dark"] .hero-emphasis {
+  color: #eef3f5;
+}
+
+.hero-word-emphasis {
   background: linear-gradient(120deg, #111111 0%, #24404e 85%, #6d8e9d 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-}
-
-:root[data-theme="dark"] .hero-emphasis {
-  background: linear-gradient(120deg, #f0f4f6 0%, #bdd1db 68%, #7b9baa 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
 }
 
 .hero-copy .section-eyebrow,
@@ -894,6 +896,13 @@ h3 {
 
 .hero-word-emphasis {
   animation-delay: calc(260ms + (var(--word-index) * 100ms));
+}
+
+:root[data-theme="dark"] .hero-word-emphasis {
+  background: linear-gradient(120deg, #f0f4f6 0%, #bdd1db 68%, #7b9baa 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .hero-copy p {
