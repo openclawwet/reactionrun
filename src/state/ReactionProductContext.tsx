@@ -63,6 +63,7 @@ type StatCard = {
 };
 
 type LeaderboardRow = {
+  id?: string;
   rank: string;
   name: string;
   tag: string;
@@ -77,6 +78,7 @@ type BaseLeaderboardRow = Omit<LeaderboardRow, "rank" | "isCurrentUser"> & {
 };
 
 type SubmissionStatus = "idle" | "submitting" | "success" | "error";
+type LeaderboardView = "top" | "recent";
 
 type ReactionProductContextValue = {
   backendMode: BackendMode;
@@ -100,12 +102,14 @@ type ReactionProductContextValue = {
   workspaceStats: StatCard[];
   progressTrend: TrendPoint[];
   sessionFeed: SessionFeedItem[];
+  leaderboardView: LeaderboardView;
   leaderboardRows: LeaderboardRow[];
   leaderboardStatus: string;
   publishStatus: SubmissionStatus;
   publishMessage: string;
   canSubmitScore: boolean;
   updateGuestProfile: (patch: Partial<GuestProfile>) => void;
+  setLeaderboardView: (view: LeaderboardView) => void;
   refreshLeaderboard: () => Promise<void>;
   showLeaderboard: () => Promise<void>;
   startNewSession: () => void;
@@ -289,6 +293,7 @@ const buildRemoteLeaderboardRows = (
   isGerman: boolean,
 ): BaseLeaderboardRow[] =>
   entries.map((entry) => ({
+    id: entry.id,
     guestId: entry.guestId,
     name: entry.displayName,
     tag: entry.tag,
@@ -323,6 +328,7 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
   const [leaderboardLastSyncedAt, setLeaderboardLastSyncedAt] = useState<string | null>(null);
   const [publishStatus, setPublishStatus] = useState<SubmissionStatus>("idle");
   const [publishMessage, setPublishMessage] = useState("");
+  const [leaderboardView, setLeaderboardView] = useState<LeaderboardView>("top");
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -563,7 +569,25 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
     provisionalRank = "#100+";
   }
 
-  const leaderboardRows = rankedLeaderboard.slice(0, 8);
+  const topLeaderboardRows = rankedLeaderboard.slice(0, 100);
+  const recentLeaderboardRows = buildRemoteLeaderboardRows(remoteRecentLeaderboard, isGerman).map(
+    (entry, index) => {
+      const isCurrentUser = entry.guestId
+        ? entry.guestId === state.guestId
+        : normalizedGuestTag
+          ? normalizeTag(entry.tag) === normalizedGuestTag
+          : false;
+
+      return {
+        rank: String(index + 1).padStart(2, "0"),
+        ...entry,
+        isCurrentUser,
+      };
+    },
+  );
+
+  const leaderboardRows =
+    leaderboardView === "recent" ? recentLeaderboardRows : topLeaderboardRows;
 
   const workspaceStats: StatCard[] = [
     {
@@ -792,12 +816,14 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
         workspaceStats,
         progressTrend,
         sessionFeed,
+        leaderboardView,
         leaderboardRows,
         leaderboardStatus,
         publishStatus,
         publishMessage,
         canSubmitScore,
         updateGuestProfile,
+        setLeaderboardView,
         refreshLeaderboard,
         showLeaderboard,
         startNewSession,

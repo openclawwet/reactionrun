@@ -1536,6 +1536,22 @@ h3 {
   font-size: 0.82rem;
 }
 
+.toolbar-pill {
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.toolbar-pill:hover {
+  color: var(--copy);
+  transform: translateY(-1px);
+}
+
 :root[data-theme="dark"] .session-history span,
 :root[data-theme="dark"] .toolbar-pill {
   border-color: rgba(255, 255, 255, 0.08);
@@ -2146,7 +2162,8 @@ h3 {
   display: block;
   width: 100%;
   margin-top: 18px;
-  overflow: hidden;
+  max-height: 1040px;
+  overflow: auto;
 }
 
 .leaderboard-row {

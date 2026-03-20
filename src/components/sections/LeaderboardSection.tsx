@@ -7,9 +7,23 @@ import { useReactionProduct } from "../../state/ReactionProductContext";
 
 export function LeaderboardSection() {
   const { locale } = useLocale();
-  const { leaderboardRows, leaderboardStatus, provisionalRank } = useReactionProduct();
+  const {
+    leaderboardRows,
+    leaderboardStatus,
+    provisionalRank,
+    leaderboardView,
+    setLeaderboardView,
+  } = useReactionProduct();
   const isGerman = locale === "de";
   const hasRows = leaderboardRows.length > 0;
+  const firstColumnLabel =
+    leaderboardView === "recent"
+      ? isGerman
+        ? "Neu"
+        : "Latest"
+      : isGerman
+        ? "Rang"
+        : "Rank";
 
   return (
     <section className="section" id="leaderboard">
@@ -19,8 +33,8 @@ export function LeaderboardSection() {
           title="Leaderboard"
           description={
             isGerman
-              ? "Vergleiche deine beste Reaktionszeit sofort und sieh, wo dein aktueller Score landet."
-              : "Compare your best reaction time instantly and see where your current score lands."
+              ? "Sieh die globalen Bestwerte und die letzten veroefentlichten Scores aus allen Geraeten und Sessions."
+              : "See global best scores and the latest published runs across devices and sessions."
           }
         />
 
@@ -28,8 +42,30 @@ export function LeaderboardSection() {
           <GlassPanel className="leaderboard-panel">
             <div className="leaderboard-toolbar">
               <div className="toolbar-pills">
-                <span className="toolbar-pill toolbar-pill-active">{isGerman ? "Global" : "Global"}</span>
-                <span className="toolbar-pill">Live</span>
+                <button
+                  type="button"
+                  className={
+                    leaderboardView === "top"
+                      ? "toolbar-pill toolbar-pill-active"
+                      : "toolbar-pill"
+                  }
+                  onClick={() => setLeaderboardView("top")}
+                  aria-pressed={leaderboardView === "top"}
+                >
+                  {isGerman ? "Top 100" : "Top 100"}
+                </button>
+                <button
+                  type="button"
+                  className={
+                    leaderboardView === "recent"
+                      ? "toolbar-pill toolbar-pill-active"
+                      : "toolbar-pill"
+                  }
+                  onClick={() => setLeaderboardView("recent")}
+                  aria-pressed={leaderboardView === "recent"}
+                >
+                  {isGerman ? "Letzte 100" : "Latest 100"}
+                </button>
               </div>
               <span className="leaderboard-note">{leaderboardStatus}</span>
             </div>
@@ -40,7 +76,7 @@ export function LeaderboardSection() {
               aria-label={isGerman ? "Reaction-Run-Leaderboard" : "Reaction leaderboard"}
             >
               <div className="leaderboard-row leaderboard-row-header" role="row">
-                <span role="columnheader">{isGerman ? "Rang" : "Rank"}</span>
+                <span role="columnheader">{firstColumnLabel}</span>
                 <span role="columnheader">{isGerman ? "Spieler" : "Player"}</span>
                 <span role="columnheader">{isGerman ? "Region" : "Region"}</span>
                 <span role="columnheader">{isGerman ? "Bestwert" : "Best"}</span>
@@ -52,7 +88,7 @@ export function LeaderboardSection() {
                   <div
                     className={`leaderboard-row${entry.isCurrentUser ? " leaderboard-row-user" : ""}`}
                     role="row"
-                    key={`${entry.tag}-${entry.rank}`}
+                    key={entry.id ?? `${entry.tag}-${entry.rank}`}
                   >
                     <span role="cell" className="leaderboard-rank">
                       {entry.rank}
@@ -75,8 +111,8 @@ export function LeaderboardSection() {
                   <strong>{isGerman ? "Noch keine Live-Eintraege." : "No live entries yet."}</strong>
                   <p>
                     {isGerman
-                      ? "Fuehre oben einen gueltigen Test durch und sende deinen Score ins Leaderboard, um den ersten echten Eintrag zu setzen."
-                      : "Run a valid test above and submit your score to the leaderboard to create the first real entry."}
+                      ? "Fuehre oben einen gueltigen Test durch und nutze danach Leaderboard anzeigen, damit dein Score hier global erscheint."
+                      : "Run a valid test above, then use Show leaderboard so your score appears here globally."}
                   </p>
                 </div>
               )}
@@ -95,7 +131,11 @@ export function LeaderboardSection() {
                     : "Ranking"}
               </span>
               <h3>
-                {provisionalRank
+                {leaderboardView === "recent"
+                  ? isGerman
+                    ? "Die letzten 100 veroeffentlichten Eintraege laufen hier live ein."
+                    : "The latest 100 published entries appear here live."
+                  : provisionalRank
                   ? isGerman
                     ? `Dein aktueller Bestwert steht auf ${provisionalRank}.`
                     : `Your current best sits at ${provisionalRank}.`
@@ -104,7 +144,11 @@ export function LeaderboardSection() {
                     : "Run a valid test to enter the board."}
               </h3>
               <p>
-                {provisionalRank
+                {leaderboardView === "recent"
+                  ? isGerman
+                    ? "Wenn ein Score am MacBook, Handy oder Tablet veroeffentlicht wurde, taucht er hier geraeteuebergreifend in der Verlaufsansicht auf."
+                    : "Once a score has been published from a MacBook, phone, or tablet, it appears here across devices in the latest feed."
+                  : provisionalRank
                   ? isGerman
                     ? "Das Board aktualisiert sich aus deinem echten Testergebnis, hebt deine Zeile hervor und bleibt leicht scanbar."
                     : "The board updates from your real test result, highlights your row, and keeps the comparison easy to scan."
