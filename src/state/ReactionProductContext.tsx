@@ -409,10 +409,15 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
     .filter((entry) => entry.sessionId === state.activeSessionId)
     .map((entry) => entry.value);
   const recordedRounds = state.rounds.map((entry) => entry.value);
+  const eligibleRecordedRounds = recordedRounds.filter((value) => isLeaderboardEligibleScore(value));
   const hasRecordedRounds = recordedRounds.length > 0;
   const recordedRoundCount = recordedRounds.length;
   const bestReactionMs = hasRecordedRounds ? Math.min(...recordedRounds) : null;
   const averageReactionMs = average(recordedRounds);
+  const leaderboardBestReactionMs = eligibleRecordedRounds.length
+    ? Math.min(...eligibleRecordedRounds)
+    : null;
+  const leaderboardAverageReactionMs = average(eligibleRecordedRounds);
   const currentSessionBestMs = currentSessionRounds.length
     ? Math.min(...currentSessionRounds)
     : null;
@@ -506,8 +511,8 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
   const guestRegion = state.guestProfile.region.trim().toUpperCase() || "WEB";
 
   const canSubmitScore =
-    isLeaderboardEligibleScore(bestReactionMs) &&
-    isLeaderboardEligibleScore(averageReactionMs);
+    leaderboardBestReactionMs !== null &&
+    leaderboardAverageReactionMs !== null;
 
   const baseLeaderboardRows = buildRemoteLeaderboardRows(remoteLeaderboard, isGerman);
   const localRowName = guestDisplayName || (isGerman ? "Du" : "You");
@@ -650,7 +655,7 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
   ];
 
   const leaderboardStatus =
-    publishStatus === "success"
+    publishStatus !== "idle" && publishMessage
       ? publishMessage
       : backendMode === "live"
         ? leaderboardSyncStatus === "success"
@@ -739,8 +744,8 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
       setPublishStatus("success");
       setPublishMessage(
         isGerman
-          ? `${resolvedIdentity.displayName} ist jetzt mit ${bestReactionMs} ms in der Leaderboard-Vorschau verbunden.`
-          : `${resolvedIdentity.displayName} is now connected to the leaderboard preview with ${bestReactionMs} ms.`,
+          ? `${resolvedIdentity.displayName} ist jetzt mit ${leaderboardBestReactionMs} ms in der Leaderboard-Vorschau verbunden.`
+          : `${resolvedIdentity.displayName} is now connected to the leaderboard preview with ${leaderboardBestReactionMs} ms.`,
       );
       return;
     }
@@ -755,17 +760,17 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
         tag: resolvedIdentity.tag,
         region: resolvedIdentity.region,
         email: state.guestProfile.email,
-        bestReactionMs,
-        averageReactionMs,
-        roundsCount: recordedRoundCount,
+        bestReactionMs: leaderboardBestReactionMs,
+        averageReactionMs: leaderboardAverageReactionMs,
+        roundsCount: Math.min(Math.max(recordedRoundCount, 1), 64),
         sessionId: state.activeSessionId,
       });
       await refreshLeaderboard();
       setPublishStatus("success");
       setPublishMessage(
         isGerman
-          ? `${resolvedIdentity.displayName} ist jetzt mit ${bestReactionMs} ms live im Leaderboard.`
-          : `${resolvedIdentity.displayName} is now live on the leaderboard with ${bestReactionMs} ms.`,
+          ? `${resolvedIdentity.displayName} ist jetzt mit ${leaderboardBestReactionMs} ms live im Leaderboard.`
+          : `${resolvedIdentity.displayName} is now live on the leaderboard with ${leaderboardBestReactionMs} ms.`,
       );
     } catch (error) {
       const message = mapLeaderboardErrorMessage(error, isGerman);
