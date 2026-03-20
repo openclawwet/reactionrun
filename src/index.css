@@ -807,13 +807,17 @@ h3 {
   align-content: center;
   justify-items: center;
   text-align: center;
+  position: relative;
 }
 
 .hero-copy h1 {
   max-width: 9.2ch;
+  position: relative;
   font-size: clamp(3.5rem, 12vw, 7.2rem);
   line-height: 0.9;
   letter-spacing: -0.095em;
+  isolation: isolate;
+  overflow: visible;
 }
 
 .hero-emphasis {
@@ -829,11 +833,126 @@ h3 {
   background-clip: text;
 }
 
+.hero-copy .section-eyebrow,
+.hero-copy p,
+.hero-actions {
+  opacity: 0;
+  animation: hero-block-reveal 860ms cubic-bezier(0.18, 0.9, 0.24, 1) forwards;
+}
+
+.hero-copy .section-eyebrow {
+  animation-delay: 40ms;
+}
+
+.hero-copy p {
+  animation-delay: 620ms;
+}
+
+.hero-actions {
+  animation-delay: 760ms;
+}
+
+.hero-title-line {
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-copy h1::before {
+  content: "";
+  position: absolute;
+  top: -26%;
+  left: 50%;
+  width: min(72%, 540px);
+  height: 68%;
+  transform: translateX(-50%);
+  background:
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.14) 52%, transparent 74%);
+  filter: blur(18px);
+  opacity: 0;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: 0;
+  animation: hero-spotlight-sweep 2.6s cubic-bezier(0.16, 0.88, 0.24, 1) 240ms forwards;
+}
+
+:root[data-theme="dark"] .hero-copy h1::before {
+  background:
+    radial-gradient(circle at center, rgba(205, 227, 236, 0.26), rgba(133, 165, 180, 0.12) 50%, transparent 76%);
+  filter: blur(24px);
+}
+
+.hero-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.86em) scale(0.96);
+  filter: blur(11px);
+  will-change: transform, opacity, filter;
+  animation: hero-word-reveal 920ms cubic-bezier(0.16, 0.92, 0.24, 1) forwards;
+  animation-delay: calc(110ms + (var(--word-index) * 92ms));
+}
+
+.hero-word-emphasis {
+  animation-delay: calc(260ms + (var(--word-index) * 100ms));
+}
+
 .hero-copy p {
   max-width: 920px;
   color: var(--muted);
   font-size: 1.08rem;
   line-height: 1.86;
+}
+
+@keyframes hero-word-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(0.86em) scale(0.96);
+    filter: blur(11px);
+  }
+
+  62% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes hero-block-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes hero-spotlight-sweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-54%) translateY(-34px) scale(0.74);
+  }
+
+  24% {
+    opacity: 0.8;
+  }
+
+  58% {
+    opacity: 0.92;
+  }
+
+  100% {
+    opacity: 0.1;
+    transform: translateX(-46%) translateY(36px) scale(1.22);
+  }
 }
 
 .hero-actions {
@@ -3371,5 +3490,14 @@ h3 {
   *::after {
     animation: none !important;
     transition: none !important;
+  }
+
+  .hero-copy .section-eyebrow,
+  .hero-copy p,
+  .hero-actions,
+  .hero-word {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
   }
 }
