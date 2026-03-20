@@ -508,7 +508,7 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
   let provisionalRank: string | null = null;
   const composableLeaderboard = [...baseLeaderboardRows];
 
-  if (bestReactionMs !== null) {
+  if (backendMode !== "live" && bestReactionMs !== null) {
     const localPreviewRow: BaseLeaderboardRow = {
       guestId: state.guestId,
       name: localRowName,
@@ -518,13 +518,9 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
       delta:
         publishStatus === "success"
           ? "Live"
-          : backendMode === "live"
-            ? isGerman
-              ? "Lokal"
-              : "Local"
-            : isGerman
-              ? "Vorschau"
-              : "Preview",
+          : isGerman
+            ? "Vorschau"
+            : "Preview",
     };
     const existingIndex = composableLeaderboard.findIndex(
       (entry) =>
@@ -565,8 +561,17 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
     };
   });
 
-  if (!provisionalRank && bestReactionMs !== null && composableLeaderboard.length > 100) {
+  if (!provisionalRank && backendMode !== "live" && bestReactionMs !== null && composableLeaderboard.length > 100) {
     provisionalRank = "#100+";
+  }
+
+  if (backendMode === "live" && !provisionalRank) {
+    const recentOwnEntry = remoteRecentLeaderboard.find((entry) => entry.guestId === state.guestId);
+
+    if (recentOwnEntry) {
+      const rankIndex = remoteLeaderboard.findIndex((entry) => entry.guestId === state.guestId);
+      provisionalRank = rankIndex >= 0 ? `#${String(rankIndex + 1).padStart(2, "0")}` : "#100+";
+    }
   }
 
   const topLeaderboardRows = rankedLeaderboard.slice(0, 100);
