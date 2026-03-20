@@ -17,6 +17,10 @@ export type RemoteLeaderboardEntry = {
   claimRequested: boolean;
 };
 
+export const BACKEND_ERROR_CODES = {
+  rpcSchemaCacheMiss: "REACTION_RUN_RPC_SCHEMA_CACHE_MISS",
+} as const;
+
 export type GuestScoreSubmissionInput = {
   guestId: string;
   displayName: string;
@@ -74,6 +78,28 @@ const ensureBackend = () => {
 
 const clampLeaderboardLimit = (value: number) => Math.max(1, Math.min(100, Math.floor(value)));
 
+const wait = (ms: number) =>
+  new Promise((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
+
+const isRpcSchemaCacheMiss = (error: { code?: string; message?: string } | null) =>
+  Boolean(
+    error &&
+      (error.code === "PGRST202" ||
+        (error.message?.includes("schema cache") &&
+          (error.message.includes("submit_guest_score") ||
+            error.message.includes("request_profile_claim")))),
+  );
+
+const createBackendError = (error: { message?: string; code?: string }) => {
+  if (isRpcSchemaCacheMiss(error)) {
+    return new Error(BACKEND_ERROR_CODES.rpcSchemaCacheMiss);
+  }
+
+  return new Error(error.message || "Reaction Run backend request failed.");
+};
+
 export const normalizeTag = (value: string) => {
   const trimmed = value
     .trim()
@@ -116,7 +142,7 @@ export async function fetchRemoteLeaderboard(view: RemoteLeaderboardView = "top"
 
 export async function publishGuestScore(input: GuestScoreSubmissionInput) {
   const client = ensureBackend();
-  const { error } = await client.rpc("submit_guest_score", {
+  const rpcPayload = {
     p_guest_id: input.guestId,
     p_display_name: input.displayName,
     p_tag: normalizeTag(input.tag),
@@ -127,10 +153,17 @@ export async function publishGuestScore(input: GuestScoreSubmissionInput) {
     p_session_id: input.sessionId,
     p_claim_email: input.email?.trim() || null,
     p_source: "web",
-  });
+  };
+
+  let { error } = await client.rpc("submit_guest_score", rpcPayload);
+
+  if (isRpcSchemaCacheMiss(error)) {
+    await wait(1200);
+    ({ error } = await client.rpc("submit_guest_score", rpcPayload));
+  }
 
   if (error) {
-    throw new Error(error.message);
+    throw createBackendError(error);
   }
 }
 
@@ -142,7 +175,7 @@ export async function requestClaimLink(input: GuestScoreSubmissionInput) {
     throw new Error("Email is required to request a claim link.");
   }
 
-  const { error } = await client.rpc("request_profile_claim", {
+  const rpcPayload = {
     p_guest_id: input.guestId,
     p_display_name: input.displayName,
     p_tag: normalizeTag(input.tag),
@@ -153,9 +186,16 @@ export async function requestClaimLink(input: GuestScoreSubmissionInput) {
     p_rounds_count: input.roundsCount,
     p_session_id: input.sessionId,
     p_source: "web",
-  });
+  };
+
+  let { error } = await client.rpc("request_profile_claim", rpcPayload);
+
+  if (isRpcSchemaCacheMiss(error)) {
+    await wait(1200);
+    ({ error } = await client.rpc("request_profile_claim", rpcPayload));
+  }
 
   if (error) {
-    throw new Error(error.message);
+    throw createBackendError(error);
   }
 }

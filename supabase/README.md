@@ -2,7 +2,12 @@
 
 1. Open the Supabase SQL editor for your project.
 2. Run [`schema.sql`](/Users/nilsmacmini/Desktop/websites/reaktion/supabase/schema.sql).
-3. Add these variables to your local `.env` and your hosting provider:
+3. If the website still reports that `submit_guest_score(...)` could not be found, run this once in the SQL editor and then refresh the site:
+
+```sql
+notify pgrst, 'reload schema';
+```
+4. Add these variables to your local `.env` and your hosting provider:
 
 ```env
 VITE_SUPABASE_URL=https://your-project-ref.supabase.co

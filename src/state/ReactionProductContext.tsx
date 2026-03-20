@@ -6,6 +6,7 @@ import {
   type ReactNode,
 } from "react";
 import {
+  BACKEND_ERROR_CODES,
   backendMode,
   fetchRemoteLeaderboard,
   normalizeTag,
@@ -262,6 +263,25 @@ const formatImprovement = (value: number | null, isGerman: boolean) => {
   return `${prefix}${Math.abs(value)} ms`;
 };
 
+const mapLeaderboardErrorMessage = (error: unknown, isGerman: boolean) => {
+  if (
+    error instanceof Error &&
+    error.message === BACKEND_ERROR_CODES.rpcSchemaCacheMiss
+  ) {
+    return isGerman
+      ? "Das Live-Leaderboard wird gerade initialisiert. Bitte versuche es in ein paar Sekunden erneut."
+      : "The live leaderboard is still initializing. Please try again in a few seconds.";
+  }
+
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+
+  return isGerman
+    ? "Dieser Score konnte nicht mit dem Leaderboard verbunden werden."
+    : "Could not connect this score to the leaderboard.";
+};
+
 const parseBestTime = (value: string) => Number.parseInt(value.replace(/[^\d]/g, ""), 10);
 
 const buildRemoteLeaderboardRows = (
@@ -352,12 +372,10 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
       );
       setLeaderboardLastSyncedAt(new Date().toISOString());
     } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : isGerman
-            ? "Das Live-Leaderboard konnte nicht geladen werden."
-            : "Could not load the live leaderboard.";
+      const message = mapLeaderboardErrorMessage(
+        error,
+        isGerman,
+      );
       setLeaderboardSyncStatus("error");
       setLeaderboardSyncMessage(message);
     }
@@ -704,12 +722,7 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
           : `${resolvedIdentity.displayName} is now live on the leaderboard with ${bestReactionMs} ms.`,
       );
     } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : isGerman
-            ? "Dieser Score konnte nicht mit dem Leaderboard verbunden werden."
-            : "Could not connect this score to the leaderboard.";
+      const message = mapLeaderboardErrorMessage(error, isGerman);
       setPublishStatus("error");
       setPublishMessage(message);
     }

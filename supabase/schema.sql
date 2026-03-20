@@ -377,3 +377,5 @@ grant execute on function public.request_profile_claim(
   text,
   text
 ) to anon, authenticated;
+
+notify pgrst, 'reload schema';
