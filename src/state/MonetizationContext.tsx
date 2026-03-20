@@ -17,6 +17,8 @@ import {
   APP_ROUTE_EVENT,
   getAppRouteFromLocation,
   getConsentManagementUrl,
+  isAdEligibleRoute,
+  isLegalRoute,
   type AppRoute,
 } from "../lib/appRoute";
 
@@ -180,7 +182,7 @@ export function MonetizationProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (typeof window === "undefined" || route !== "home" || !isAdSenseConfigured) {
+    if (typeof window === "undefined" || !isAdEligibleRoute(route) || !isAdSenseConfigured) {
       return;
     }
 
@@ -233,7 +235,7 @@ export function MonetizationProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    if (route !== "home") {
+    if (!isAdEligibleRoute(route)) {
       window.location.assign(consentManagementUrl);
       return;
     }
@@ -285,7 +287,7 @@ export function MonetizationProvider({ children }: { children: ReactNode }) {
       consentState,
       cookiePreferences,
       cookiePreference,
-      showCookieBanner: route === "home" && !cookiePreferences.choiceMade,
+      showCookieBanner: !isLegalRoute(route) && !cookiePreferences.choiceMade,
       cookieSettingsOpen,
       googleCmpConfigured: adsLaunchState !== "cmp-required" && adsLaunchState !== "missing-client",
       canManageConsent: adsLaunchState === "ready",

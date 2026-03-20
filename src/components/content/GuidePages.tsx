@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
+import { AdSlot } from "../AdSlot";
 import { Button } from "../Button";
 import { GlassPanel } from "../GlassPanel";
+import { adsensePrimarySlot, adsenseSecondarySlot } from "../../lib/ads";
 import { goToHomeSection } from "../../lib/appRoute";
 import { useLocale } from "../../state/LocaleContext";
 
@@ -116,6 +118,18 @@ export function GoodReactionTimePage() {
           </p>
         </GuideSection>
 
+        <AdSlot
+          label={isGerman ? "Werbung" : "Sponsored"}
+          title={isGerman ? "Guide-Placement" : "Guide placement"}
+          description={
+            isGerman
+              ? "Diese Werbeflaeche ist fuer inhaltliche Guide-Seiten vorgesehen und bleibt vom eigentlichen Reaktionstest getrennt."
+              : "This ad surface is intended for editorial guide pages and stays separated from the actual reaction test."
+          }
+          slotId={adsensePrimarySlot}
+          layout="frame-only"
+        />
+
         <GuideSection title={isGerman ? "3. Was Reaction Run als validen Score behandelt" : "3. What Reaction Run treats as a valid score"}>
           <p>
             {isGerman
@@ -192,6 +206,18 @@ export function MobileVsDesktopPage() {
               : "That is why scores are never completely hardware-neutral. A good test makes those limits visible instead of pretending every environment is identical."}
           </p>
         </GuideSection>
+
+        <AdSlot
+          label={isGerman ? "Werbung" : "Sponsored"}
+          title={isGerman ? "Guide-Placement" : "Guide placement"}
+          description={
+            isGerman
+              ? "Diese Werbeflaeche ist fuer inhaltliche Guide-Seiten vorgesehen und bleibt vom eigentlichen Reaktionstest getrennt."
+              : "This ad surface is intended for editorial guide pages and stays separated from the actual reaction test."
+          }
+          slotId={adsenseSecondarySlot}
+          layout="frame-only"
+        />
 
         <GuideSection title={isGerman ? "3. Was fuer faire Vergleiche sinnvoll ist" : "3. What makes comparisons fair"}>
           <p>

@@ -1,7 +1,6 @@
-import { AdSlot } from "../AdSlot";
+import { Button } from "../Button";
 import { GlassPanel } from "../GlassPanel";
 import { SectionHeader } from "../SectionHeader";
-import { adsensePrimarySlot } from "../../lib/ads";
 import { useLocale } from "../../state/LocaleContext";
 import { useReactionProduct } from "../../state/ReactionProductContext";
 
@@ -158,17 +157,22 @@ export function LeaderboardSection() {
               </p>
             </GlassPanel>
 
-            <AdSlot
-              label={isGerman ? "Werbung" : "Sponsored"}
-              title={isGerman ? "Sponsor-Slot am Leaderboard" : "Leaderboard sponsor slot"}
-              description={
-                isGerman
-                  ? "Eine premium-taugliche Werbeplatzierung ausserhalb der eigentlichen Ranking-Tabelle."
-                  : "A premium-safe ad placement outside the core ranking table."
-              }
-              slotId={adsensePrimarySlot}
-              layout="frame-only"
-            />
+            <GlassPanel className="guide-link-card">
+              <span className="subtle-pill">{isGerman ? "Guide" : "Guide"}</span>
+              <strong>
+                {isGerman
+                  ? "Mobile vs. Desktop Reaktionszeit"
+                  : "Mobile vs. desktop reaction time"}
+              </strong>
+              <p>
+                {isGerman
+                  ? "Verstehe, warum Scores je nach Eingabemethode und Geraet anders ausfallen und wie globale Vergleiche fair gelesen werden."
+                  : "Understand why scores change by device and input method, and how to read global comparisons more fairly."}
+              </p>
+              <Button href="/mobile-vs-desktop-reaction-time" variant="secondary">
+                {isGerman ? "Guide lesen" : "Read guide"}
+              </Button>
+            </GlassPanel>
           </div>
         </div>
       </div>

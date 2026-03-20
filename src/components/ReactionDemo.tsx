@@ -1,8 +1,6 @@
-import { AdSlot } from "./AdSlot";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "./Button";
 import { GlassPanel } from "./GlassPanel";
-import { adsenseTestSlot } from "../lib/ads";
 import { useLocale } from "../state/LocaleContext";
 import { useReactionProduct } from "../state/ReactionProductContext";
 
@@ -254,19 +252,6 @@ export function ReactionDemo() {
               </div>
             </div>
           </GlassPanel>
-
-          <AdSlot
-            label={isGerman ? "Werbung" : "Sponsored"}
-            title={isGerman ? "Premium Sponsor-Slot im Testmodul" : "Premium sponsor slot in the test module"}
-            description={
-              isGerman
-                ? "Diese Flaeche ist fuer ausgewaehlte Performance-Partner im ersten Screen reserviert und bleibt klar vom Test getrennt. Passend fuer Hardware, Tools und Produkte, die zum Fokus der Seite passen."
-                : "This surface is reserved for selected performance partners in the first screen and stays clearly separated from the test itself. Ideal for hardware, tools, and products that fit the focus of the platform."
-            }
-            slotId={adsenseTestSlot}
-            variant="compact"
-            layout="frame-only"
-          />
         </div>
       </div>
     </div>

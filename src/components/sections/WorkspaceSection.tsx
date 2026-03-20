@@ -1,8 +1,7 @@
-import { AdSlot } from "../AdSlot";
+import { Button } from "../Button";
 import { GlassPanel } from "../GlassPanel";
 import { ProgressChart } from "../ProgressChart";
 import { SectionHeader } from "../SectionHeader";
-import { adsenseSecondarySlot } from "../../lib/ads";
 import { useLocale } from "../../state/LocaleContext";
 import { useReactionProduct } from "../../state/ReactionProductContext";
 
@@ -122,18 +121,22 @@ export function WorkspaceSection() {
               </div>
             </GlassPanel>
 
-            <AdSlot
-              label={isGerman ? "Werbung" : "Sponsor"}
-              title={isGerman ? "Sauberer Sponsor-Slot" : "Clean support slot"}
-              description={
-                isGerman
-                  ? "Eine getrennte Werbeflaeche, die Test und Statistikbereich fokussiert haelt."
-                  : "A separated ad surface that keeps the test and the stats area focused."
-              }
-              slotId={adsenseSecondarySlot}
-              variant="compact"
-              layout="frame-only"
-            />
+            <GlassPanel className="guide-link-card">
+              <span className="subtle-pill">{isGerman ? "Guide" : "Guide"}</span>
+              <strong>
+                {isGerman
+                  ? "Was ist eine gute Reaktionszeit?"
+                  : "What is a good reaction time?"}
+              </strong>
+              <p>
+                {isGerman
+                  ? "Lies, wie valide Runs, Durchschnitt und Geraetekontext zusammenhaengen und warum ein einzelner Rekord nicht alles ist."
+                  : "Read how valid runs, averages, and device context work together and why a single record never tells the whole story."}
+              </p>
+              <Button href="/good-reaction-time" variant="secondary">
+                {isGerman ? "Guide lesen" : "Read guide"}
+              </Button>
+            </GlassPanel>
           </div>
         </div>
       </div>
