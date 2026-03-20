@@ -119,6 +119,8 @@ type ReactionProductContextValue = {
 
 const STORAGE_KEY = "reaction-run-product-state-v2";
 const PLAYER_COUNTER_KEY = "reaction-run-player-sequence-v1";
+const LEADERBOARD_MIN_REACTION_MS = 50;
+const LEADERBOARD_MAX_REACTION_MS = 1000;
 
 const ReactionProductContext = createContext<ReactionProductContextValue | null>(null);
 
@@ -250,6 +252,9 @@ const average = (values: number[]) =>
   values.length
     ? Math.round(values.reduce((total, value) => total + value, 0) / values.length)
     : null;
+
+const isLeaderboardEligibleScore = (value: number | null) =>
+  value !== null && value >= LEADERBOARD_MIN_REACTION_MS && value <= LEADERBOARD_MAX_REACTION_MS;
 
 const formatMilliseconds = (value: number | null, fallback = "--") =>
   value === null ? fallback : `${value} ms`;
@@ -500,7 +505,9 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
   const guestDisplayName = state.guestProfile.displayName.trim();
   const guestRegion = state.guestProfile.region.trim().toUpperCase() || "WEB";
 
-  const canSubmitScore = Boolean(bestReactionMs !== null && averageReactionMs !== null);
+  const canSubmitScore =
+    isLeaderboardEligibleScore(bestReactionMs) &&
+    isLeaderboardEligibleScore(averageReactionMs);
 
   const baseLeaderboardRows = buildRemoteLeaderboardRows(remoteLeaderboard, isGerman);
   const localRowName = guestDisplayName || (isGerman ? "Du" : "You");
@@ -708,12 +715,22 @@ export function ReactionProductProvider({ children }: { children: ReactNode }) {
   const showLeaderboard = async () => {
     const resolvedIdentity = ensureGuestIdentity();
 
-    if (!canSubmitScore || bestReactionMs === null || averageReactionMs === null) {
+    if (bestReactionMs === null || averageReactionMs === null) {
       setPublishStatus("idle");
       setPublishMessage(
         isGerman
           ? `${resolvedIdentity.displayName} ist bereit. Absolviere eine gueltige Runde, um ins Leaderboard zu kommen.`
           : `${resolvedIdentity.displayName} is ready. Finish a valid round to enter the leaderboard.`,
+      );
+      return;
+    }
+
+    if (!canSubmitScore) {
+      setPublishStatus("error");
+      setPublishMessage(
+        isGerman
+          ? `Nur valide Reaktionszeiten zwischen ${LEADERBOARD_MIN_REACTION_MS} und ${LEADERBOARD_MAX_REACTION_MS} ms werden ins Leaderboard uebernommen. Starte noch eine saubere Runde und versuche es erneut.`
+          : `Only valid reaction times between ${LEADERBOARD_MIN_REACTION_MS} and ${LEADERBOARD_MAX_REACTION_MS} ms are accepted for the leaderboard. Run one more clean round and try again.`,
       );
       return;
     }
