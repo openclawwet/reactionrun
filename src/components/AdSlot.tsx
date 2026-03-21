@@ -33,9 +33,8 @@ export function AdSlot({
   const hasValidSlot = isAdSenseSlotConfigured(slotId);
   const isGerman = locale === "de";
   const isSilentSlot = adsLaunchState !== "ready";
-  const showLocalPreview = import.meta.env.DEV;
 
-  if (!hasValidSlot && !showLocalPreview) {
+  if (!hasValidSlot) {
     return null;
   }
 
@@ -79,7 +78,6 @@ export function AdSlot({
     `ad-slot-${variant}`,
     `ad-slot-${layout}`,
     isSilentSlot ? "ad-slot-silent" : "",
-    showLocalPreview ? "ad-slot-dev-visible" : "",
     layout === "frame-only" ? "glass-panel" : "",
   ]
     .filter(Boolean)
@@ -102,17 +100,7 @@ export function AdSlot({
       ) : null}
 
       <div className="ad-slot-frame" id={elementId}>
-        {showLocalPreview ? (
-          <div className="ad-slot-dev-preview">
-            <span>{label}</span>
-            <strong>{title}</strong>
-            <p>
-              {isGerman
-                ? "Lokale Vorschau der Werbeflaeche. Dieser Rahmen ist nur auf localhost sichtbar."
-                : "Local ad slot preview. This frame is only visible on localhost."}
-            </p>
-          </div>
-        ) : adsEnabled ? (
+        {adsEnabled ? (
           <ins
             ref={slotRef}
             className="adsbygoogle ad-slot-surface"

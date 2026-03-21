@@ -1,7 +1,9 @@
+import { AdSlot } from "../AdSlot";
 import { Button } from "../Button";
 import { GlassPanel } from "../GlassPanel";
 import { ProgressChart } from "../ProgressChart";
 import { SectionHeader } from "../SectionHeader";
+import { adsenseSecondarySlot } from "../../lib/ads";
 import { useLocale } from "../../state/LocaleContext";
 import { useReactionProduct } from "../../state/ReactionProductContext";
 
@@ -121,22 +123,37 @@ export function WorkspaceSection() {
               </div>
             </GlassPanel>
 
-            <GlassPanel className="guide-link-card">
-              <span className="subtle-pill">{isGerman ? "Guide" : "Guide"}</span>
-              <strong>
-                {isGerman
-                  ? "Was ist eine gute Reaktionszeit?"
-                  : "What is a good reaction time?"}
-              </strong>
-              <p>
-                {isGerman
-                  ? "Lies, wie valide Runs, Durchschnitt und Geraetekontext zusammenhaengen und warum ein einzelner Rekord nicht alles ist."
-                  : "Read how valid runs, averages, and device context work together and why a single record never tells the whole story."}
-              </p>
-              <Button href="/good-reaction-time" variant="secondary">
-                {isGerman ? "Guide lesen" : "Read guide"}
-              </Button>
-            </GlassPanel>
+            <div className="workspace-guide-stack">
+              <GlassPanel className="guide-link-card workspace-guide-card">
+                <span className="subtle-pill">{isGerman ? "Guide" : "Guide"}</span>
+                <strong>
+                  {isGerman
+                    ? "Was ist eine gute Reaktionszeit?"
+                    : "What is a good reaction time?"}
+                </strong>
+                <p>
+                  {isGerman
+                    ? "Lies, wie valide Runs, Durchschnitt und Geraetekontext zusammenhaengen und warum ein einzelner Rekord nicht alles ist."
+                    : "Read how valid runs, averages, and device context work together and why a single record never tells the whole story."}
+                </p>
+                <Button href="/good-reaction-time" variant="secondary">
+                  {isGerman ? "Guide lesen" : "Read guide"}
+                </Button>
+              </GlassPanel>
+
+              <AdSlot
+                label={isGerman ? "Werbung" : "Sponsored"}
+                title={isGerman ? "Stats Placement" : "Stats placement"}
+                description={
+                  isGerman
+                    ? "Kompakte Werbeflaeche innerhalb der Statistik-Rail, getrennt von Chart und Session-Feed."
+                    : "Compact ad surface inside the stats rail, separated from the chart and session feed."
+                }
+                slotId={adsenseSecondarySlot}
+                variant="compact"
+                layout="frame-only"
+              />
+            </div>
           </div>
         </div>
       </div>

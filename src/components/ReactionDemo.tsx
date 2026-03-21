@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+import { AdSlot } from "./AdSlot";
 import { Button } from "./Button";
 import { GlassPanel } from "./GlassPanel";
+import { adsensePrimarySlot } from "../lib/ads";
 import { useLocale } from "../state/LocaleContext";
 import { useReactionProduct } from "../state/ReactionProductContext";
 
@@ -97,6 +99,7 @@ export function ReactionDemo() {
   const average = currentSessionAverageMs ?? averageReactionMs;
   const score = average === null ? null : Math.max(0, 420 - average);
   const rank = provisionalRank;
+  const recentSessionRounds = currentSessionRounds.slice(-20).reverse();
 
   const startRound = () => {
     clearTimer(timerRef);
@@ -182,6 +185,25 @@ export function ReactionDemo() {
                   : "Wait"}
           </strong>
           <p>{copy.body}</p>
+          {recentSessionRounds.length ? (
+            <div
+              className="reaction-surface-session-cloud"
+              aria-label={
+                isGerman
+                  ? "Letzte 20 Session-Runden"
+                  : "Latest 20 session rounds"
+              }
+            >
+              <span className="reaction-surface-session-label">
+                {isGerman ? "Aktuelle Session" : "Current session"}
+              </span>
+              <div className="reaction-surface-session-list">
+                {recentSessionRounds.map((attempt, index) => (
+                  <span key={`${attempt}-${index}`}>{attempt} ms</span>
+                ))}
+              </div>
+            </div>
+          ) : null}
           {phase === "result" ? (
             <span className="reaction-surface-result-hint">{resultHint}</span>
           ) : null}
@@ -230,28 +252,17 @@ export function ReactionDemo() {
             </GlassPanel>
           </div>
 
-          <GlassPanel className="reaction-session-panel">
-            <div className="session-strip">
-              <div className="session-strip-copy">
-                <span>{isGerman ? "Aktuelle Session" : "Current session"}</span>
-                <strong>
-                  {currentSessionRounds.length} {isGerman ? "Runden" : "rounds"}
-                </strong>
-              </div>
-              <div
-                className="session-history"
-                aria-label={isGerman ? "Letzte Reaktionsversuche" : "Recent reaction attempts"}
-              >
-                {currentSessionRounds.length ? (
-                  currentSessionRounds.map((attempt, index) => (
-                    <span key={`${attempt}-${index}`}>{attempt} ms</span>
-                  ))
-                ) : (
-                  <span>{isGerman ? "Neue Session bereit" : "New session ready"}</span>
-                )}
-              </div>
-            </div>
-          </GlassPanel>
+          <AdSlot
+            label={isGerman ? "Werbung" : "Sponsored"}
+            title={isGerman ? "Testmodul Placement" : "Test module placement"}
+            description={
+              isGerman
+                ? "Werbeflaeche in der rechten Test-Rail, klar getrennt vom eigentlichen Reaktionsfeld."
+                : "Ad surface in the right-side test rail, clearly separated from the actual reaction field."
+            }
+            slotId={adsensePrimarySlot}
+            layout="frame-only"
+          />
         </div>
       </div>
     </div>
