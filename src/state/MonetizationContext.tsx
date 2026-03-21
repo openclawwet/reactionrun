@@ -10,6 +10,7 @@ import {
 import {
   adsenseClientId,
   adsLaunchState,
+  canInitializeAdSense,
   isAdSenseConfigured,
   type AdsLaunchState,
 } from "../lib/ads";
@@ -182,7 +183,7 @@ export function MonetizationProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (typeof window === "undefined" || !isAdEligibleRoute(route) || !isAdSenseConfigured) {
+    if (typeof window === "undefined" || !isAdEligibleRoute(route) || !canInitializeAdSense) {
       return;
     }
 
@@ -283,7 +284,7 @@ export function MonetizationProvider({ children }: { children: ReactNode }) {
     () => ({
       adsMode: isAdSenseConfigured ? "live" : "preview",
       adsLaunchState,
-      adsEnabled: route === "home" && isAdSenseConfigured,
+      adsEnabled: isAdEligibleRoute(route) && canInitializeAdSense,
       consentState,
       cookiePreferences,
       cookiePreference,

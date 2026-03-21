@@ -18,6 +18,7 @@ export const hasAdSenseClientConfig = /^ca-pub-\d+$/.test(adsenseClientId);
 export const isAdSenseSiteReady = parseFlag(import.meta.env.VITE_ADSENSE_SITE_READY);
 export const isAdSenseCmpReady = parseFlag(import.meta.env.VITE_ADSENSE_CMP_READY);
 export const adsensePublisherId = hasAdSenseClientConfig ? adsenseClientId.replace(/^ca-/, "") : "";
+export const canInitializeAdSense = hasAdSenseClientConfig && isAdSenseCmpReady;
 
 export const adsLaunchState: AdsLaunchState = !hasAdSenseClientConfig
   ? "missing-client"

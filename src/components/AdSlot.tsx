@@ -32,8 +32,10 @@ export function AdSlot({
   const elementId = useId();
   const hasValidSlot = isAdSenseSlotConfigured(slotId);
   const isGerman = locale === "de";
+  const isSilentSlot = adsLaunchState !== "ready";
+  const showLocalPreview = import.meta.env.DEV;
 
-  if (adsLaunchState !== "ready") {
+  if (!hasValidSlot && !showLocalPreview) {
     return null;
   }
 
@@ -56,23 +58,6 @@ export function AdSlot({
     }
   }, [adsEnabled, hasValidSlot]);
 
-  const previewCopy =
-    !hasValidSlot
-      ? isGerman
-        ? "AdSense ist bereit, aber diese Flaeche benoetigt noch ihre eigene numerische Slot-ID."
-        : "AdSense is ready, but this surface still needs its own numeric slot id."
-      : consentState === "granted"
-        ? isGerman
-          ? "Google CMP ist aktiv. Dieser Slot rendert ueber das veroefentlichte AdSense-Setup."
-          : "Google CMP is active. This slot renders through the published AdSense setup."
-        : consentState === "denied"
-          ? isGerman
-            ? "Google CMP ist aktiv. Diese Flaeche wird gemaess der getroffenen Auswahl eingeschraenkt oder ohne Personalisierung ausgeliefert."
-            : "Google CMP is active. This surface is limited or served without personalization according to the visitor's choice."
-          : isGerman
-            ? "Google CMP verwaltet diese Flaeche. Der Slot wird aktiv, sobald die Consent-Nachricht und AdSense-Bereitstellung abgeschlossen sind."
-            : "Google CMP manages this surface. The slot becomes active once the consent message and AdSense serving flow complete.";
-
   const statusLabel = adsEnabled && hasValidSlot
     ? consentState === "granted"
       ? isGerman
@@ -93,6 +78,8 @@ export function AdSlot({
     "ad-slot",
     `ad-slot-${variant}`,
     `ad-slot-${layout}`,
+    isSilentSlot ? "ad-slot-silent" : "",
+    showLocalPreview ? "ad-slot-dev-visible" : "",
     layout === "frame-only" ? "glass-panel" : "",
   ]
     .filter(Boolean)
@@ -100,7 +87,7 @@ export function AdSlot({
 
   return (
     <div className={className}>
-      {layout === "default" ? (
+      {layout === "default" && !isSilentSlot ? (
         <>
           <div className="ad-slot-head">
             <span className="subtle-pill">{label}</span>
@@ -115,7 +102,17 @@ export function AdSlot({
       ) : null}
 
       <div className="ad-slot-frame" id={elementId}>
-        {adsEnabled && hasValidSlot ? (
+        {showLocalPreview ? (
+          <div className="ad-slot-dev-preview">
+            <span>{label}</span>
+            <strong>{title}</strong>
+            <p>
+              {isGerman
+                ? "Lokale Vorschau der Werbeflaeche. Dieser Rahmen ist nur auf localhost sichtbar."
+                : "Local ad slot preview. This frame is only visible on localhost."}
+            </p>
+          </div>
+        ) : adsEnabled ? (
           <ins
             ref={slotRef}
             className="adsbygoogle ad-slot-surface"
@@ -125,7 +122,7 @@ export function AdSlot({
             data-ad-format="auto"
             data-full-width-responsive="true"
           />
-        ) : (
+        ) : isSilentSlot ? null : (
           <div className="ad-slot-preview">
             <span>{isGerman ? "Werbeflaeche" : "Sponsored placement"}</span>
             <strong>
@@ -133,7 +130,19 @@ export function AdSlot({
                 ? "Saubere, getrennte und premium-taugliche Werbeflaeche"
                 : "Clean, separated, premium-safe ad surface"}
             </strong>
-            <p>{previewCopy}</p>
+            <p>
+              {consentState === "granted"
+                ? isGerman
+                  ? "Google CMP ist aktiv. Dieser Slot rendert ueber das veroefentlichte AdSense-Setup."
+                  : "Google CMP is active. This slot renders through the published AdSense setup."
+                : consentState === "denied"
+                  ? isGerman
+                    ? "Google CMP ist aktiv. Diese Flaeche wird gemaess der getroffenen Auswahl eingeschraenkt oder ohne Personalisierung ausgeliefert."
+                    : "Google CMP is active. This surface is limited or served without personalization according to the visitor's choice."
+                  : isGerman
+                    ? "Google CMP verwaltet diese Flaeche. Der Slot wird aktiv, sobald die Consent-Nachricht und AdSense-Bereitstellung abgeschlossen sind."
+                    : "Google CMP manages this surface. The slot becomes active once the consent message and AdSense serving flow complete."}
+            </p>
           </div>
         )}
       </div>

@@ -73,9 +73,9 @@ export const getRoutePath = (route: AppRoute) =>
   route === "home" ? "/" : APP_ROUTE_PATHS[route];
 
 export const isAdEligibleRoute = (route: AppRoute) =>
-  route === "good-reaction-time" || route === "mobile-vs-desktop";
+  route === "home" || route === "good-reaction-time" || route === "mobile-vs-desktop";
 
-export const getConsentManagementUrl = () => "/good-reaction-time?manage-consent=1";
+export const getConsentManagementUrl = () => "/?manage-consent=1";
 
 export const isLegalRoute = (route: AppRoute) =>
   route === "privacy" || route === "imprint" || route === "cookies";

@@ -1083,7 +1083,8 @@ h3 {
 
 .workspace-rail,
 .workspace-main,
-.leaderboard-side,
+.leaderboard-main,
+.leaderboard-ad-rail,
 .platform-copy {
   display: grid;
   gap: 18px;
@@ -1742,8 +1743,36 @@ h3 {
   padding: 24px;
 }
 
-.leaderboard-side {
+.leaderboard-main {
   align-content: start;
+}
+
+.leaderboard-bottom-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.leaderboard-ad-rail {
+  min-width: 0;
+}
+
+.leaderboard-ad-rail > .ad-slot-frame-only {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.leaderboard-ad-rail > .ad-slot-frame-only .ad-slot-frame {
+  flex: 1;
+  min-height: 100%;
+  height: 100%;
+}
+
+.leaderboard-ad-rail > .ad-slot-frame-only .ad-slot-surface,
+.leaderboard-ad-rail > .ad-slot-frame-only .ad-slot-preview,
+.leaderboard-ad-rail > .ad-slot-frame-only .ad-slot-dev-preview {
+  min-height: 100%;
+  height: 100%;
 }
 
 .leaderboard-side-panel h3 {
@@ -1753,6 +1782,23 @@ h3 {
 .ad-slot {
   padding: 26px;
   border-radius: var(--radius-xl);
+}
+
+.ad-slot-silent {
+  padding: 0;
+}
+
+.ad-slot-silent.glass-panel {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.ad-slot-silent.glass-panel::before,
+.ad-slot-silent.glass-panel::after {
+  display: none;
 }
 
 .ad-slot-copy strong,
@@ -1860,6 +1906,14 @@ h3 {
   overflow: hidden;
 }
 
+.ad-slot-silent .ad-slot-frame {
+  margin-top: 0;
+  min-height: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
 .ad-slot-frame-only .ad-slot-frame {
   margin-top: 0;
   padding: 0;
@@ -1886,6 +1940,10 @@ h3 {
   min-height: 100%;
 }
 
+.ad-slot-silent .ad-slot-surface {
+  min-height: 0;
+}
+
 .ad-slot-preview {
   display: grid;
   align-content: center;
@@ -1896,6 +1954,66 @@ h3 {
   background:
     radial-gradient(circle at top, rgba(109, 142, 157, 0.12), transparent 32%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(246, 245, 241, 0.6));
+}
+
+.ad-slot-dev-visible {
+  padding: 0;
+}
+
+.ad-slot-dev-visible.glass-panel {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.ad-slot-dev-visible.glass-panel::before,
+.ad-slot-dev-visible.glass-panel::after {
+  display: none;
+}
+
+.ad-slot-dev-visible .ad-slot-frame {
+  margin-top: 0;
+  min-height: 240px;
+  padding: 0;
+  border: 1px dashed rgba(109, 142, 157, 0.42);
+  background: rgba(109, 142, 157, 0.06);
+}
+
+:root[data-theme="dark"] .ad-slot-dev-visible .ad-slot-frame {
+  border-color: rgba(133, 165, 180, 0.38);
+  background: rgba(133, 165, 180, 0.08);
+}
+
+.ad-slot-dev-preview {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  min-height: inherit;
+  padding: 28px;
+  text-align: center;
+}
+
+.ad-slot-dev-preview span {
+  color: var(--accent-strong);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.ad-slot-dev-preview strong {
+  margin-top: 10px;
+  font-size: 1.16rem;
+  letter-spacing: -0.03em;
+}
+
+.ad-slot-dev-preview p {
+  max-width: 34ch;
+  margin-top: 10px;
+  color: var(--muted);
+  line-height: 1.72;
 }
 
 :root[data-theme="dark"] .ad-slot-preview {
@@ -2319,6 +2437,7 @@ h3 {
   gap: 14px;
   padding: 24px;
   border-radius: 28px;
+  align-content: start;
 }
 
 .guide-link-card strong {
@@ -2964,28 +3083,28 @@ h3 {
     align-items: stretch;
   }
 
-  .leaderboard-side {
+  .leaderboard-main,
+  .leaderboard-ad-rail {
     min-height: 100%;
-    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .leaderboard-bottom-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+  }
+
+  .leaderboard-side-panel,
+  .guide-link-card {
+    min-height: 100%;
+  }
+
+  .leaderboard-ad-rail {
     align-content: stretch;
   }
 
-  .leaderboard-side > .ad-slot-frame-only {
-    display: flex;
-    flex-direction: column;
+  .leaderboard-ad-rail > .ad-slot-frame-only,
+  .leaderboard-ad-rail > .ad-slot-frame-only .ad-slot-frame {
     min-height: 100%;
-  }
-
-  .leaderboard-side > .ad-slot-frame-only .ad-slot-frame {
-    flex: 1;
-    min-height: 100%;
-    height: 100%;
-  }
-
-  .leaderboard-side > .ad-slot-frame-only .ad-slot-surface,
-  .leaderboard-side > .ad-slot-frame-only .ad-slot-preview {
-    min-height: 100%;
-    height: 100%;
   }
 }
 
@@ -3106,6 +3225,10 @@ h3 {
   .workspace-grid,
   .leaderboard-grid {
     gap: 18px;
+  }
+
+  .leaderboard-bottom-grid {
+    grid-template-columns: 1fr;
   }
 
   .leaderboard-table {
@@ -3444,6 +3567,10 @@ h3 {
   .workspace-grid,
   .leaderboard-grid {
     gap: 14px;
+  }
+
+  .leaderboard-bottom-grid {
+    grid-template-columns: 1fr;
   }
 
   .progress-chart {
